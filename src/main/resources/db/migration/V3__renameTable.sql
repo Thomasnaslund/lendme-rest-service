@@ -1,0 +1,1 @@
+ALTER TABLE loanItems RENAME TO loan_items;

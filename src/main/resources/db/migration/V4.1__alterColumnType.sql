@@ -1,0 +1,2 @@
+ALTER TABLE loan_items
+ALTER COLUMN amount TYPE INT;
