@@ -87,16 +87,6 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			<plugin>
-				<groupId>org.flywaydb</groupId>
-				<artifactId>flyway-core</artifactId>
-				<configuration>
-					<driver>org.postgresql.Driver</driver>
-					<url>jdbc:postgresql://localhost:5432/loandb</url>
-					<user>postgres</user>
-					<password>mysecretp@ssword</password>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 

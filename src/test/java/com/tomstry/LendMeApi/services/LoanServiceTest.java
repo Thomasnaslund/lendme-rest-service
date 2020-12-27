@@ -33,13 +33,6 @@ public class LoanServiceTest {
     @InjectMocks
     LoanService loanService;
 
-   /*
-    public void setUp() {
-        loanService = new LoanService(dao);
-    }
-    */
-
-
     @Test
     public void shouldNotSaveObject() {
         //Create one sample userDto object with test data
