@@ -35,5 +35,4 @@ build/
 /.idea/
 
 ##Env variables###
-!**/src/main/resources/
-!**/src/test/resources/
+!**/src/main/resources/application.yml
