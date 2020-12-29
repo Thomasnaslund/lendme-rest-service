@@ -37,7 +37,7 @@ class ItemTest {
     }
 
     @Test
-    @DisplayName("flush on item without owner should throw DataIntegrity Exception")
+    @DisplayName("flushing item without owner should throw DataIntegrity Exception")
     public void saveItemWithNullOwnerShouldThrowException() throws Exception {
         Assertions.assertThrows(DataIntegrityViolationException.class, () -> {
             Item item = new Item(itemTestName, itemTestDesc,BigDecimal.valueOf(20),null);
