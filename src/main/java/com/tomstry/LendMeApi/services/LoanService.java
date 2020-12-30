@@ -5,6 +5,7 @@ import com.tomstry.LendMeApi.repositories.LoanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -19,10 +20,9 @@ public class LoanService {
         this.loanRepository = loanRepository;
     }
 
-    public Collection findLoan(int id) {
-
-        Loan e = loanRepository.findById(id).orElse(null);
-        return Collections.emptyList();
+    public Loan findLoan(int id) {
+        Loan e = loanRepository.findById(id).orElse(new Loan());
+        return e;
     }
 
     public Collection<Loan> getUpcomingDeadlines() {
@@ -30,15 +30,7 @@ public class LoanService {
        return loans;
     }
 
-
-    public Loan updateLoan(Loan loan) {
-
-        if (loan == null || loan.getId() == null) {
-            return null;
-        }
-
-
+    public Loan updateLoan(@NotNull Loan loan) {
         return loanRepository.save(loan);
-
     }
 }

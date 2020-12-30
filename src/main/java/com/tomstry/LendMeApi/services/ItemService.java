@@ -28,9 +28,7 @@ public class ItemService {
     }
 
     public Item getItemByID(int id) {
-     Item retrievedItem = itemRepository.findById(id).orElse(null);
-
-     if (retrievedItem == null) return null;
+     Item retrievedItem = itemRepository.findById(id).orElse(new Item());
      return retrievedItem;
     }
 
@@ -39,7 +37,6 @@ public class ItemService {
     }
 
     public Item updateItem(Item itemToUpdate) {
-
         Item updatedItem = itemRepository.save(itemToUpdate);
         return updatedItem;
     }
