@@ -4,7 +4,6 @@ package com.tomstry.LendMeApi.entities;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

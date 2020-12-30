@@ -1,8 +1,6 @@
-package com.tomstry.LendMeApi.services;
+package com.tomstry.LendMeApi.unit.services;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class PersonServiceTest {
 

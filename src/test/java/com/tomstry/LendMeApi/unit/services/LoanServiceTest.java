@@ -1,9 +1,8 @@
-package com.tomstry.LendMeApi.services;
+package com.tomstry.LendMeApi.unit.services;
 
 import com.tomstry.LendMeApi.entities.Loan;
 import com.tomstry.LendMeApi.repositories.LoanRepository;
-import org.checkerframework.common.value.qual.StaticallyExecutable;
-import org.junit.Before;
+import com.tomstry.LendMeApi.services.LoanService;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
@@ -11,17 +10,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.testcontainers.shaded.org.apache.commons.lang.reflect.FieldUtils;
 
-import javax.security.auth.message.AuthException;
-
-import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoanServiceTest {

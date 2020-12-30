@@ -1,26 +1,26 @@
-package com.tomstry.LendMeApi.entities;
+package com.tomstry.LendMeApi.it.entities;
 
+import com.tomstry.LendMeApi.entities.Item;
+import com.tomstry.LendMeApi.entities.Person;
 import com.tomstry.LendMeApi.repositories.ItemRepository;
 import com.tomstry.LendMeApi.repositories.PersonRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import java.math.BigDecimal;
 
 @DataJpaTest
-class ItemTest {
+class ItemIT {
 
     @Autowired
     private ItemRepository itemRepository;
 
     @Autowired
     private PersonRepository personRepository;
-
 
     private static final String itemTestName = "dum";
     private static final String itemTestDesc = "dum grej lizom";
