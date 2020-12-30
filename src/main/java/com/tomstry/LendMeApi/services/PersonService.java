@@ -31,9 +31,9 @@ public class PersonService {
         return Optional.ofNullable(person);
     }
 
-    public int deletePerson(int id) {
+    public boolean deletePerson(int id) {
         personRepository.deleteById(id);
-        return 1;
+        return false;
     }
 
     public Optional<Person> getPersonByName(String name) {
