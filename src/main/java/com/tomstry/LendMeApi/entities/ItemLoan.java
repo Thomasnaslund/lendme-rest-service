@@ -1,13 +1,21 @@
 package com.tomstry.LendMeApi.entities;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Data
 @Table(name= "loanItems")
+@NoArgsConstructor
 public class ItemLoan {
+
+    public ItemLoan (Loan loan, Item item, Integer amount) {
+        setLoan(loan);
+        setItem(item);
+        setAmount(amount);
+    }
 
     @EmbeddedId
     private ItemLoanKey id;

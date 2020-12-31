@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Service
 public class LoanService {
@@ -25,8 +26,8 @@ public class LoanService {
         return e;
     }
 
-    public Collection<Loan> getUpcomingDeadlines() {
-       Collection<Loan> loans = loanRepository.findTop10OrderByDeadline().orElse(Collections.emptyList());
+    public Collection<Loan> getComingDeadlines() {
+       Collection loans = loanRepository.findTop10OrderByDeadline().orElse(Collections.emptyList());
        return loans;
     }
 

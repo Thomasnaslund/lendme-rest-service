@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -15,7 +16,6 @@ public class ItemService {
     private ItemRepository itemRepository;
 
     public Item addItem(@NonNull Item item) {
-
         //if contains id try update
         if (item.getId() < 0 || item.getId() != null)
             return updateItem(item);
@@ -24,7 +24,8 @@ public class ItemService {
     }
 
     public List<Item> getAllItems() {
-        return getAllItems();
+         List items = itemRepository.findAll();
+         return items;
     }
 
     public Item getItemByID(int id) {
@@ -33,7 +34,7 @@ public class ItemService {
     }
 
     public void deleteItem(int id) {
-        itemRepository.deleteById(id);
+         itemRepository.deleteById(id);
     }
 
     public Item updateItem(Item itemToUpdate) {

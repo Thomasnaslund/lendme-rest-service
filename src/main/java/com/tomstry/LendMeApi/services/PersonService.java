@@ -41,11 +41,7 @@ public class PersonService {
     }
 
     public Person updatePerson(Person person) {
-        if (person == null);
-        Person existingPerson = personRepository.findById(person.getId()).orElse(null);
-        existingPerson.setEmail(person.getEmail());
-        existingPerson.setFullName(person.getFullName());
-        existingPerson.setId(person.getId());
+        Person existingPerson = personRepository.findById(person.getId()).orElse(person);
         return personRepository.save(existingPerson);
     }
 
