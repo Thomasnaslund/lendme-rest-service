@@ -3,8 +3,10 @@ package com.tomstry.LendMeApi.controllers;
 import com.tomstry.LendMeApi.entities.Person;
 import com.tomstry.LendMeApi.services.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.function.EntityResponse;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -27,9 +29,12 @@ public class PersonController {
     }
 
     @GetMapping(path = "/{id}")
-    public Person getPersonById(@PathVariable int id) {
-        return personService.getPersonByID(id)
-                .orElse(null);
+    public ResponseEntity<Person> getPersonById(@PathVariable int id) {
+        Person person = personService.getPersonByID(id).orElse(null);
+        if (person == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(person);
     }
 
     @DeleteMapping("/{id}")
