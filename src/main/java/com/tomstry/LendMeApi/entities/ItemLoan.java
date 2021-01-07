@@ -17,16 +17,15 @@ public class ItemLoan {
         setAmount(amount);
     }
 
-    @EmbeddedId
-    private ItemLoanKey id;
+    @Id
+    @GeneratedValue
+    public Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("LoanId")
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "loan_id")
     private Loan loan;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("ItemId")
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "item_id")
     private Item item;
 

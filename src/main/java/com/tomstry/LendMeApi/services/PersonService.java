@@ -33,7 +33,6 @@ public class PersonService {
 
     public boolean deletePerson(int id) {
         personRepository.deleteById(id);
-        return false;
     }
 
     public Optional<Person> getPersonByName(String name) {

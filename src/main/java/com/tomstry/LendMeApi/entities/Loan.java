@@ -1,14 +1,21 @@
 package com.tomstry.LendMeApi.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@Data
+@Setter
+@RequiredArgsConstructor
 @Getter
 @Table(name= "loans")
 
@@ -19,18 +26,23 @@ public class Loan {
     @Column(name = "id")
     private Integer id;
 
-    @OneToMany(mappedBy = "loan", cascade = CascadeType.ALL)
-    private List<ItemLoan> items = new ArrayList<>();
+    @OneToMany(mappedBy = "loan", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @Valid
+    @NotEmpty
+    private Set<ItemLoan> items = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "lender_id")
+    @NotEmpty
     private Person lender;
 
     @Column(name="deadline")
-    private Timestamp deadline;
+    @NotNull
+    private Timestamp start;
 
     @Column(name="issued")
-    private Timestamp issued;
+    @NotNull
+    private Timestamp end;
 
     @Column(name="terms")
     private String terms;

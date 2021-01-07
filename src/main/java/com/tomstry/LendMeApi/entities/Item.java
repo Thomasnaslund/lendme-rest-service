@@ -6,7 +6,9 @@ import lombok.*;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -35,10 +37,10 @@ public class Item {
     @Column(name = "cost")
     private BigDecimal price;
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
-    private List<ItemLoan> loans = new ArrayList<>();
+    @OneToMany(mappedBy = "item")
+    private Set<ItemLoan> loans = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "owner_id", nullable = false)
     private Person owner;
 
