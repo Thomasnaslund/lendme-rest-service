@@ -1,12 +1,19 @@
 package com.tomstry.LendMeApi.service;
 
+import com.tomstry.LendMeApi.entity.Item;
+import com.tomstry.LendMeApi.entity.ItemLoan;
 import com.tomstry.LendMeApi.entity.Loan;
+import com.tomstry.LendMeApi.repository.ItemRepository;
 import com.tomstry.LendMeApi.repository.LoanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.Period;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -22,11 +29,28 @@ public class LoanService {
         return loan;
     }
 
-    public ResponseEntity<Loan> addLoan(Loan loan) {
+    public Loan addLoan(Loan loan) {
+
+            for (ItemLoan itemloan : loan.getItems()) {
+
+                // is item is attached to other loans?
+
+                if (!itemloan.getItem().getLoans().isEmpty()) {
+
+                    //Check if dates overlap
+
+                }
+            }
+
+        Loan savedLoan = loanRepository.save(loan);
+        return savedLoan;
+    }
 
 
-        savedLoan = loanRepository.saveAndFlush(loan);
-        return savedLoan != null;
+
+
+    private static boolean hasOverlap(ZonedDateTime t1,ZonedDateTime t2 , ZonedDateTime p1, ZonedDateTime p2) {
+        return !t2.isBefore(p1) && !t1.isAfter(p2);
     }
 
     public Collection<Loan> getComingDeadlines() {
