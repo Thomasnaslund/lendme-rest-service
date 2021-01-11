@@ -80,7 +80,6 @@
 			<version>5.2.9.Final</version>
 		</dependency>
 	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>

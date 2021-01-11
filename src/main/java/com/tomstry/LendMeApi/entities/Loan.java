@@ -36,11 +36,11 @@ public class Loan {
     @NotEmpty
     private Person lender;
 
-    @Column(name="deadline")
+    @Column(name="start")
     @NotNull
     private Timestamp start;
 
-    @Column(name="issued")
+    @Column(name="end")
     @NotNull
     private Timestamp end;
 
