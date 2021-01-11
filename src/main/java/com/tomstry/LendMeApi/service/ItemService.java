@@ -1,12 +1,11 @@
-package com.tomstry.LendMeApi.services;
+package com.tomstry.LendMeApi.service;
 
-import com.tomstry.LendMeApi.entities.Item;
-import com.tomstry.LendMeApi.repositories.ItemRepository;
+import com.tomstry.LendMeApi.entity.Item;
+import com.tomstry.LendMeApi.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 
 @Service

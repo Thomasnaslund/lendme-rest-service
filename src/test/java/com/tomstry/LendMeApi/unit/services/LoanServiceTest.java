@@ -1,8 +1,8 @@
 package com.tomstry.LendMeApi.unit.services;
 
-import com.tomstry.LendMeApi.entities.Loan;
-import com.tomstry.LendMeApi.repositories.LoanRepository;
-import com.tomstry.LendMeApi.services.LoanService;
+import com.tomstry.LendMeApi.entity.Loan;
+import com.tomstry.LendMeApi.repository.LoanRepository;
+import com.tomstry.LendMeApi.service.LoanService;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;

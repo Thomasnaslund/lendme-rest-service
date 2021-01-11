@@ -1,12 +1,11 @@
-package com.tomstry.LendMeApi.controllers;
+package com.tomstry.LendMeApi.controller;
 
-import com.tomstry.LendMeApi.entities.Person;
-import com.tomstry.LendMeApi.services.PersonService;
+import com.tomstry.LendMeApi.entity.Person;
+import com.tomstry.LendMeApi.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.function.EntityResponse;
 
 import javax.validation.Valid;
 import java.util.List;

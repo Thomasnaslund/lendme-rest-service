@@ -1,7 +1,7 @@
 package com.tomstry.LendMeApi.it.entities;
 
-import com.tomstry.LendMeApi.entities.Person;
-import com.tomstry.LendMeApi.repositories.PersonRepository;
+import com.tomstry.LendMeApi.entity.Person;
+import com.tomstry.LendMeApi.repository.PersonRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

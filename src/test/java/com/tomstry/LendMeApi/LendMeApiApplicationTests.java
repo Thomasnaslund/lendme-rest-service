@@ -1,6 +1,6 @@
 package com.tomstry.LendMeApi;
 
-import com.tomstry.LendMeApi.entities.Person;
+import com.tomstry.LendMeApi.entity.Person;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

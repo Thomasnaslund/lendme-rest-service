@@ -1,7 +1,7 @@
-package com.tomstry.LendMeApi.services;
+package com.tomstry.LendMeApi.service;
 
-import com.tomstry.LendMeApi.entities.Loan;
-import com.tomstry.LendMeApi.repositories.LoanRepository;
+import com.tomstry.LendMeApi.entity.Loan;
+import com.tomstry.LendMeApi.repository.LoanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class LoanService {

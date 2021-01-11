@@ -1,9 +1,9 @@
 package com.tomstry.LendMeApi.it.entities;
 
-import com.tomstry.LendMeApi.entities.Item;
-import com.tomstry.LendMeApi.entities.Person;
-import com.tomstry.LendMeApi.repositories.ItemRepository;
-import com.tomstry.LendMeApi.repositories.PersonRepository;
+import com.tomstry.LendMeApi.entity.Item;
+import com.tomstry.LendMeApi.entity.Person;
+import com.tomstry.LendMeApi.repository.ItemRepository;
+import com.tomstry.LendMeApi.repository.PersonRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

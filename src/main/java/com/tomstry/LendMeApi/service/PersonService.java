@@ -1,7 +1,7 @@
-package com.tomstry.LendMeApi.services;
+package com.tomstry.LendMeApi.service;
 
-import com.tomstry.LendMeApi.entities.Person;
-import com.tomstry.LendMeApi.repositories.PersonRepository;
+import com.tomstry.LendMeApi.entity.Person;
+import com.tomstry.LendMeApi.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

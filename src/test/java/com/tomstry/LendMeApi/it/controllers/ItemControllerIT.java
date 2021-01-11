@@ -1,6 +1,6 @@
 package com.tomstry.LendMeApi.it.controllers;
 
-import com.tomstry.LendMeApi.services.ItemService;
+import com.tomstry.LendMeApi.service.ItemService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

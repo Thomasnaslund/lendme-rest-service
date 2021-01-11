@@ -1,4 +1,4 @@
-package com.tomstry.LendMeApi.entities;
+package com.tomstry.LendMeApi.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

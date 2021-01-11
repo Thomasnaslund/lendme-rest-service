@@ -1,7 +1,6 @@
-package com.tomstry.LendMeApi.repositories;
+package com.tomstry.LendMeApi.repository;
 
-import com.tomstry.LendMeApi.entities.Item;
-import com.tomstry.LendMeApi.entities.ItemLoan;
+import com.tomstry.LendMeApi.entity.ItemLoan;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

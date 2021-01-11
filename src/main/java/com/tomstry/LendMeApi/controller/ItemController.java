@@ -1,6 +1,6 @@
-package com.tomstry.LendMeApi.controllers;
-import com.tomstry.LendMeApi.entities.Item;
-import com.tomstry.LendMeApi.services.ItemService;
+package com.tomstry.LendMeApi.controller;
+import com.tomstry.LendMeApi.entity.Item;
+import com.tomstry.LendMeApi.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package com.tomstry.LendMeApi.configurations;
+package com.tomstry.LendMeApi.configuration;
 
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.boot.context.properties.ConfigurationProperties;
