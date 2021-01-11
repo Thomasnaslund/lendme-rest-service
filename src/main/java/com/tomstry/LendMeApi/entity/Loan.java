@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,16 +31,14 @@ public class Loan {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "lender_id")
-    @NotEmpty
+    @Valid
     private Person lender;
 
     @Column(name="start")
-    @NotNull
-    private Timestamp start;
+    private ZonedDateTime start;
 
     @Column(name="end")
-    @NotNull
-    private Timestamp end;
+    private ZonedDateTime end;
 
     @Column(name="terms")
     private String terms;
