@@ -16,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @DataJpaTest
@@ -24,27 +25,18 @@ class LoanIT {
     @Autowired
     private LoanRepository loanRepository;
 
-    @Autowired
-    private PersonRepository personRepository;
-
-    @Autowired
-    private ItemLoanRepository itemLoanRepository;
-
-    @Autowired
-    private ItemRepository itemRepository;
-
     @Test
-    public void getComingDeadlinesShouldReturnTopTenDeadlines() {
+    public void getComingEndsShouldReturnTopTenEnds() {
 
         List<Loan> mockLoans;
-        mockLoans = generateLoans(30);
+        mockLoans = generateLoanWithItem(30);
         for (Loan loan : mockLoans) {
-            loanRepository.saveAndFlush(loan);
+            loanRepository.save(loan);
         }
-        List<Loan> retrievedLoan = (List<Loan>) loanRepository.findTop10ByOrderByDeadline().orElse(Collections.emptyList());
-        Assertions.assertNotEquals(retrievedLoan.get(1).getDeadline(), mockLoans.get(1).getDeadline());
+        List<Loan> retrievedLoan = (List<Loan>) loanRepository.findTop10ByOrderByEnd().orElse(Collections.emptyList());
         Assertions.assertEquals(retrievedLoan.size(), 10);
-        Assert.assertTrue(retrievedLoan.get(0).getDeadline().before(retrievedLoan.get(7).getDeadline()));
+        Assert.assertTrue(retrievedLoan.get(0).getEnd().isBefore(retrievedLoan.get(7).getEnd()));
+        loanRepository.flush();
     }
 
     @Test
@@ -66,13 +58,11 @@ class LoanIT {
         Random rd = new Random();
         Loan newLoan = new Loan();
 
-        Timestamp issued = nextDate();
-        Timestamp deadline = addDays(rd.nextInt(200), issued);
         newLoan.setLender(generatePeople(1).get(0));
         newLoan.setLender(newLoan.getLender());
         newLoan.setTerms("Dumbo jumbo");
-        newLoan.setIssued(nextDate());
-        newLoan.setDeadline(deadline);
+        newLoan.setStart(ZonedDateTime.now());
+        newLoan.setEnd(newLoan.getStart().plusDays(20));
         Item newItem = generateItems(1).get(0);
         ItemLoan newItemLoan = new ItemLoan();
         newItemLoan.setLoan(newLoan);
@@ -107,12 +97,10 @@ class LoanIT {
         for (int i = 0; i < mockLenders.size(); i++) {
             Random rd = new Random();
             Loan loan = new Loan();
-            Timestamp issued = nextDate();
-            Timestamp deadline = addDays(rd.nextInt(200), issued);
             loan.setLender(mockLenders.get(i));
             loan.setTerms("Dumbo jumbo");
-            loan.setIssued(nextDate());
-            loan.setDeadline(deadline);
+            loan.setStart(ZonedDateTime.now());
+            loan.setEnd(loan.getStart().plusDays(10));
             loans.add(loan);
         }
         return loans;
