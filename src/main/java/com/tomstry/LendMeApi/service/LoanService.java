@@ -29,7 +29,7 @@ public class LoanService {
     }
 
     //TODO: Should split this to multiple general functions
-    public Loan addLoan(Loan loan) {
+    public Loan addLoan(Loan loan) throws IllegalArgumentException {
 
             for (ItemLoan itemloan : loan.getItems()) {
                 // is item is attached to other loans?
@@ -40,7 +40,7 @@ public class LoanService {
                         ZonedDateTime start = existingLoan.getLoan().getStart();
                         ZonedDateTime end = existingLoan.getLoan().getEnd();
                         if (hasOverlap(start, end, loan.getStart(), loan.getEnd())) {
-                            // TODO: Should Log overlap here
+                            throw new IllegalArgumentException("Date Overlaps");
                         }
                     }
                 }
@@ -51,18 +51,21 @@ public class LoanService {
     }
 
 
-
-
     private static boolean hasOverlap(ZonedDateTime t1,ZonedDateTime t2 , ZonedDateTime p1, ZonedDateTime p2) {
         return !t2.isBefore(p1) && !t1.isAfter(p2);
+
     }
 
     public Collection<Loan> getComingDeadlines() {
-       Collection loans = loanRepository.findTop10ByOrderByDeadline().orElse(Collections.emptyList());
+       Collection loans = loanRepository.findTop10ByOrderByEnd().orElse(Collections.emptyList());
        return loans;
     }
 
     public Loan updateLoan(@NotNull Loan loan) {
         return loanRepository.save(loan);
+    }
+
+    public List<Loan> getAllLoans() {
+        return loanRepository.findAll();
     }
 }
