@@ -4,6 +4,7 @@ package com.tomstry.LendMeApi.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,7 +15,7 @@ import java.util.Set;
 @Table(name= "items")
 public class Item {
 
-    public Item (String title, String description, BigDecimal price, Person owner) {
+    public Item(String title, String description, BigDecimal price, Person owner) {
         setTitle(title);
         setDescription(description);
         setPrice(price);
@@ -27,13 +28,14 @@ public class Item {
     private Integer id;
 
     @Column(name = "title")
+    @NotBlank
     private String title;
 
     @Column(name = "info")
     private String description;
 
     @Column(name = "cost")
-    private BigDecimal price;
+    private BigDecimal price = BigDecimal.valueOf(0);
 
     @OneToMany(mappedBy = "item")
     private Set<ItemLoan> loans = new HashSet<>();

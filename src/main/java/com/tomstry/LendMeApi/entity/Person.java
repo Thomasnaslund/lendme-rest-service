@@ -4,6 +4,7 @@ package com.tomstry.LendMeApi.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Entity
@@ -23,15 +24,17 @@ public class Person {
     private Integer id;
 
     @Column(name = "full_name")
+    @NotEmpty
     private String fullName;
 
     @Column(name = "email")
+    @NotEmpty
     private String email;
 
     @OneToMany(mappedBy = "lender", cascade = CascadeType.ALL)
     private List<Loan> loans;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
-    private List<Item> items;
+    private List<Item> itemDetails;
 
 }

@@ -1,18 +1,12 @@
 package com.tomstry.LendMeApi.service;
 
-import com.tomstry.LendMeApi.entity.Item;
 import com.tomstry.LendMeApi.entity.ItemLoan;
 import com.tomstry.LendMeApi.entity.Loan;
-import com.tomstry.LendMeApi.repository.ItemRepository;
 import com.tomstry.LendMeApi.repository.LoanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
-import java.time.Duration;
-import java.time.Period;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -31,7 +25,7 @@ public class LoanService {
     //TODO: Should split this to multiple general functions
     public Loan addLoan(Loan loan) throws IllegalArgumentException {
 
-            for (ItemLoan itemloan : loan.getItems()) {
+            for (ItemLoan itemloan : loan.getItemLoans()) {
                 // is item is attached to other loans?
                 if (!itemloan.getItem().getLoans().isEmpty()) {
                     //Check if dates overlap

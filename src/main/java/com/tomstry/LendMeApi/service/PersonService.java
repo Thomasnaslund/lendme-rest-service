@@ -31,7 +31,7 @@ public class PersonService {
         return Optional.ofNullable(person);
     }
 
-    public boolean deletePerson(int id) {
+    public void deletePerson(int id) {
         personRepository.deleteById(id);
     }
 

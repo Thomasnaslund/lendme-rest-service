@@ -4,10 +4,7 @@ import com.tomstry.LendMeApi.entity.Item;
 import com.tomstry.LendMeApi.entity.ItemLoan;
 import com.tomstry.LendMeApi.entity.Loan;
 import com.tomstry.LendMeApi.entity.Person;
-import com.tomstry.LendMeApi.repository.ItemLoanRepository;
-import com.tomstry.LendMeApi.repository.ItemRepository;
 import com.tomstry.LendMeApi.repository.LoanRepository;
-import com.tomstry.LendMeApi.repository.PersonRepository;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -49,7 +46,7 @@ class LoanIT {
         }
         loanRepository.flush();
 
-        Assertions.assertNotNull(loanRepository.findAll().get(2).getItems());
+        Assertions.assertNotNull(loanRepository.findAll().get(2).getItemLoans());
      //   Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {loanRepository.findAll().get(2).getItems().get(5);});
     }
 
@@ -68,11 +65,11 @@ class LoanIT {
         newItemLoan.setLoan(newLoan);
         newItemLoan.setItem(newItem);
         newItemLoan.setAmount(20);
-        newLoan.getItems().add(newItemLoan);
+        newLoan.getItemLoans().add(newItemLoan);
         newLoan = loanRepository.save(newLoan);
         loanRepository.flush();
         Loan retrievedLoan = loanRepository.findById(newLoan.getId()).orElse(new Loan());
-        Assertions.assertTrue(retrievedLoan.getItems().iterator().next().getItem().getTitle() == newItem.getTitle());
+        Assertions.assertTrue(retrievedLoan.getItemLoans().iterator().next().getItem().getTitle() == newItem.getTitle());
     }
 
 
@@ -80,13 +77,13 @@ class LoanIT {
     private List<Loan> generateLoanWithItem(int amount) {
 
         List<Loan> mockLoans = generateLoans(amount);
-        List<Item> mockItems = generateItems(amount);
+        List<Item> mockItemDetails = generateItems(amount);
         for (int i=0; i < mockLoans.size();i++) {
             ItemLoan itemloan = new ItemLoan();
-            itemloan.setItem(mockItems.get(i));
+            itemloan.setItem(mockItemDetails.get(i));
             itemloan.setLoan(mockLoans.get(i));
             itemloan.setAmount(10-i*2);
-            mockLoans.get(i).getItems().add(itemloan);
+            mockLoans.get(i).getItemLoans().add(itemloan);
         }
         return mockLoans;
     }
@@ -141,18 +138,18 @@ class LoanIT {
 
     private List<Item> generateItems(int amount) {
         List<Person> generatedPeople = generatePeople(amount);
-        List<Item> items = new ArrayList();
+        List<Item> itemDetails = new ArrayList();
         for (int i = 0; i < generatedPeople.size(); i++) {
             Random rd = new Random();
-            Item item = new Item(
+            Item item2 = new Item(
                     i + " " + rd.nextInt() + "st item"
                     , rd.nextInt() + " desc"
                     , BigDecimal.valueOf(rd.nextInt())
                     , generatedPeople.get(i)
             );
-            items.add(item);
+            itemDetails.add(item2);
         }
-        return items;
+        return itemDetails;
     }
 
 

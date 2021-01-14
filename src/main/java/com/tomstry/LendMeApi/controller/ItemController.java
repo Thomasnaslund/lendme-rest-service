@@ -3,12 +3,14 @@ import com.tomstry.LendMeApi.entity.Item;
 import com.tomstry.LendMeApi.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
 @RequestMapping("/api/v1/item")
 @RestController
+@Validated
 public class ItemController {
 
     @Autowired
@@ -35,7 +37,7 @@ public class ItemController {
     }
 
     @PutMapping("/{id}")
-    public Item updateItem(@RequestBody @Valid @NonNull Item itemToUpdate) {
+    public Item updateItem(@RequestBody @Valid Item itemToUpdate) {
         return itemService.updateItem(itemToUpdate);
     }
 }

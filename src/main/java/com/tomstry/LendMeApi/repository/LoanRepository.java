@@ -7,6 +7,6 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface LoanRepository extends JpaRepository<Loan, Integer> {
-    Optional<Collection<Loan>> findTop10ByOrderByDeadline();
+    Optional<Collection<Loan>> findTop10ByOrderByEnd();
 
 }
