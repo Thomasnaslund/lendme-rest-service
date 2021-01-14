@@ -13,6 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import static org.mockito.Mockito.times;
 
@@ -31,7 +32,7 @@ public class LoanServiceTest {
         //Create one sample userDto object with test data
         Loan loan = new Loan();
         loan.setId(21);
-        loan.setDeadline(Timestamp.valueOf(LocalDateTime.now()));
+        loan.setStart(ZonedDateTime.now());
         Mockito.when(dao.save(Mockito.any(Loan.class))).thenAnswer(i -> i.getArguments()[0]);
         Loan retrievedLoan = loanService.updateLoan(loan);
         Mockito.verify(dao, times(1)).save(Mockito.any(Loan.class));
