@@ -10,8 +10,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@PropertySource("application.yml")
-@EnableJpaRepositories(basePackages = "com.tomstry.LendMeApi.repositories")
+//@PropertySource("application.yml")
+//@EnableJpaRepositories(basePackages = "com.tomstry.LendMeApi.repositories")
 @EnableTransactionManagement
 public class ApplicationConfig {
 
@@ -24,6 +24,8 @@ public class ApplicationConfig {
                 .build();
     }
 }
+
+
 
 
 
