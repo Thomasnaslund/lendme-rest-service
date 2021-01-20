@@ -10,8 +10,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Data
-@NoArgsConstructor
+@Setter
+@RequiredArgsConstructor
+@Getter
 @Table(name= "items")
 public class Item {
 
@@ -37,10 +38,14 @@ public class Item {
     @Column(name = "cost")
     private BigDecimal price = BigDecimal.valueOf(0);
 
-    @OneToMany(mappedBy = "item")
-    private Set<ItemLoan> loans = new HashSet<>();
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(
+            name = "itemLoan",
+            joinColumns = @JoinColumn(name = "item_id"),
+            inverseJoinColumns = @JoinColumn(name = "loan_id"))
+    private Set<Loan> loans = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "owner_id", nullable = false)
     private Person owner;
 

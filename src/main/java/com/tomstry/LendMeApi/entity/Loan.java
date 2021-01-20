@@ -25,11 +25,11 @@ public class Loan {
     @Column(name = "id")
     private Integer id;
 
-    @OneToMany(mappedBy = "loan", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @Valid
-    private Set<ItemLoan> itemLoans = new HashSet<>();
+    @ManyToMany(mappedBy = "likedCourses", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    private Set<Item> items = new HashSet<>();
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "lender_id")
     @Valid
     private Person lender;
