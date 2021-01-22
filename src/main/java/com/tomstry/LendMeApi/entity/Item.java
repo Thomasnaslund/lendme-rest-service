@@ -1,6 +1,8 @@
 package com.tomstry.LendMeApi.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,6 +16,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Getter
 @Table(name= "items")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Item {
 
     public Item(String title, String description, BigDecimal price, Person owner) {
@@ -45,8 +49,8 @@ public class Item {
             inverseJoinColumns = @JoinColumn(name = "loan_id"))
     private Set<Loan> loans = new HashSet<>();
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "owner_id", nullable = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "owner_id")
     private Person owner;
 
 }

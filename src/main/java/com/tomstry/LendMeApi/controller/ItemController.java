@@ -2,23 +2,26 @@ package com.tomstry.LendMeApi.controller;
 import com.tomstry.LendMeApi.entity.Item;
 import com.tomstry.LendMeApi.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
 @RequestMapping("/api/v1/item")
 @RestController
-@Validated
 public class ItemController {
 
     @Autowired
     private ItemService itemService;
 
+
     @PostMapping
-    public void addItem(@RequestBody @NonNull Item item) {
-        itemService.addItem(item);
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addItem(@RequestBody @Valid Item item) {
+        Item itemDto = item;
+        System.out.println(item.getOwner().getId());
+        itemService.addItem(itemDto);
     }
 
     @GetMapping
@@ -37,8 +40,8 @@ public class ItemController {
     }
 
     @PutMapping("/{id}")
-    public Item updateItem(@RequestBody @Valid Item itemToUpdate) {
-        return itemService.updateItem(itemToUpdate);
+    public Item updateItem(@PathVariable int id, @RequestBody @Valid Item itemToUpdate) {
+        return itemService.updateItem(id, itemToUpdate);
     }
 }
 
