@@ -34,14 +34,11 @@ public class LoanController {
         return loanService.getAllItemsForLoan(id);
     }
 
-    /*
     @PostMapping(path = "/{id}/items")
     @ResponseStatus(HttpStatus.CREATED)
     public Item addItemToLoan(@PathVariable final int id, @RequestBody @Valid Item item) {
-        return loanService.a(id);
+        return loanService.getItems(id);
     }
-
-     */
 
     @GetMapping(path = "/{id}")
     public Loan getLoanById(@PathVariable int id) {
