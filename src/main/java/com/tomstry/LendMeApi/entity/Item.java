@@ -49,7 +49,7 @@ public class Item {
             inverseJoinColumns = @JoinColumn(name = "loan_id"))
     private Set<Loan> loans = new HashSet<>();
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
     @JoinColumn(name = "owner_id")
     private Person owner;
 
