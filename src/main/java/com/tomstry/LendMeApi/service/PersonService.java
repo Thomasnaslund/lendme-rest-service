@@ -1,6 +1,7 @@
 package com.tomstry.LendMeApi.service;
 
 import com.tomstry.LendMeApi.entity.Person;
+import com.tomstry.LendMeApi.exceptionhandler.LoanNotFoundException;
 import com.tomstry.LendMeApi.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,9 +40,13 @@ public class PersonService {
         return personRepository.findByFullName(name);
     }
 
-    public Person updatePerson(Person person) {
-        Person existingPerson = personRepository.findById(person.getId()).orElse(person);
-        return personRepository.save(existingPerson);
+    public Person updatePerson(int id, Person newPerson) {
+        return personRepository.findById(id).map(p -> {
+                    p.setEmail(newPerson.getEmail());
+                    p.setFullName(newPerson.getFullName());
+                    return personRepository.save(p);
+                }
+        ).orElseThrow(LoanNotFoundException::new);
     }
 
 

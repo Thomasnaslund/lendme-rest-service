@@ -2,17 +2,12 @@ package com.tomstry.LendMeApi.service;
 
 import com.tomstry.LendMeApi.entity.Item;
 import com.tomstry.LendMeApi.entity.Loan;
-import com.tomstry.LendMeApi.exception.LoanNotFoundException;
-import com.tomstry.LendMeApi.exception.OverlappingDateException;
+import com.tomstry.LendMeApi.exceptionhandler.LoanNotFoundException;
+import com.tomstry.LendMeApi.exceptionhandler.OverlappingDateException;
 import com.tomstry.LendMeApi.repository.LoanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.security.cert.CollectionCertStoreParameters;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -81,5 +76,8 @@ public class LoanService {
 
         Loan loan = loanRepository.findById(id).orElseThrow(LoanNotFoundException::new);
         return loan.getItems();
+    }
+
+    public Item getItems(int id) {
     }
 }

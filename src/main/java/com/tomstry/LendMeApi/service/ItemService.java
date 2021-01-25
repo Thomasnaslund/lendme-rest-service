@@ -1,11 +1,9 @@
 package com.tomstry.LendMeApi.service;
 
 import com.tomstry.LendMeApi.entity.Item;
-import com.tomstry.LendMeApi.exception.LoanNotFoundException;
+import com.tomstry.LendMeApi.exceptionhandler.LoanNotFoundException;
 import com.tomstry.LendMeApi.repository.ItemRepository;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,7 +25,7 @@ public class ItemService {
     }
 
     public Item getItemByID(int id) {
-     Item retrievedItem = itemRepository.findById(id).orElse(new Item());
+     Item retrievedItem = itemRepository.findById(id).orElseThrow(LoanNotFoundException::new);
      return retrievedItem;
     }
 
@@ -42,7 +40,7 @@ public class ItemService {
                     item.setDescription(itemToUpdate.getDescription());
                     item.setDescription(itemToUpdate.getDescription());
                     return itemRepository.save(item);
-                }).orElseThrow(() -> new LoanNotFoundException());
+                }).orElseThrow(LoanNotFoundException::new);
     }
 }
 
