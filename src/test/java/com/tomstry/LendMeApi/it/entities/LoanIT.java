@@ -40,7 +40,6 @@ class LoanIT {
             loans.add(loan);
         }
         return loans;
-
     }
 
 
