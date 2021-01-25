@@ -17,7 +17,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Getter
 @Table(name= "loans")
-
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Loan {
 
     @Id
@@ -26,7 +27,7 @@ public class Loan {
     private Integer id;
 
     @Valid
-    @ManyToMany(mappedBy = "likedCourses", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "loans", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
     private Set<Item> items = new HashSet<>();
 
     @ManyToOne

@@ -28,12 +28,9 @@ public class PersonController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<Person> getPersonById(@PathVariable int id) {
+    public Person getPersonById(@PathVariable int id) {
         Person person = personService.getPersonByID(id).orElse(null);
-        if (person == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(person);
+        return person;
     }
 
     @DeleteMapping("/{id}")

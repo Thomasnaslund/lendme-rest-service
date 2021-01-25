@@ -1,12 +1,18 @@
 package com.tomstry.LendMeApi.service;
 
-import com.tomstry.LendMeApi.entity.ItemLoan;
+import com.tomstry.LendMeApi.entity.Item;
 import com.tomstry.LendMeApi.entity.Loan;
+import com.tomstry.LendMeApi.exception.LoanNotFoundException;
+import com.tomstry.LendMeApi.exception.OverlappingDateException;
 import com.tomstry.LendMeApi.repository.LoanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.security.cert.CollectionCertStoreParameters;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -14,39 +20,45 @@ import java.util.*;
 public class LoanService {
 
     @Autowired
-    LoanRepository loanRepository;
+    private LoanRepository loanRepository;
 
 
     public Loan findLoan(int id) {
-        Loan loan = loanRepository.findById(id).orElse(null);
+        Loan loan = loanRepository.findById(id).orElseThrow(LoanNotFoundException::new);
         return loan;
     }
 
-    //TODO: Should split this to multiple general functions
-    public Loan addLoan(Loan loan) throws IllegalArgumentException {
+    public Loan addLoan(Loan loan) throws OverlappingDateException {
 
-            for (ItemLoan itemloan : loan.getItemLoans()) {
-                // is item is attached to other loans?
-                if (!itemloan.getItem().getLoans().isEmpty()) {
-                    //Check if dates overlap
-                    Set<ItemLoan> loans = itemloan.getItem().getLoans();
-                    for (ItemLoan existingLoan : loans) {
-                        ZonedDateTime start = existingLoan.getLoan().getStart();
-                        ZonedDateTime end = existingLoan.getLoan().getEnd();
-                        if (hasOverlap(start, end, loan.getStart(), loan.getEnd())) {
-                            throw new IllegalArgumentException("Date Overlaps");
-                        }
-                    }
-                }
-            }
+        boolean loanIntervalOverlaps = loan.getItems().stream().anyMatch(l ->
+                intervalOverlaps(loan, l)
+        );
 
-        Loan savedLoan = loanRepository.save(loan);
-        return savedLoan;
+        if (loanIntervalOverlaps) throw new OverlappingDateException();
+        //TODO Log here
+        return loanRepository.save(loan);
+
     }
 
+    /**
+     * Checks if item has any other loans during provided loan period.
+     * @param loan loan which item should be added to.
+     * @param item to be added to loan, must at least contain id
+     * @throws OverlappingDateException if loan interval overlaps other loans;
+     */
+    private boolean intervalOverlaps(Loan loan, Item item) throws OverlappingDateException {
+        List<Loan> loans = (List<Loan>) loanRepository.findByItems_Id(item.getId())
+                .orElse(Collections.emptyList());
 
-    private static boolean hasOverlap(ZonedDateTime t1,ZonedDateTime t2 , ZonedDateTime p1, ZonedDateTime p2) {
-        return !t2.isBefore(p1) && !t1.isAfter(p2);
+        ZonedDateTime start = loan.getStart();
+        ZonedDateTime end = loan.getEnd();
+
+        boolean loanIntervalOverlap;
+        loanIntervalOverlap = loans.stream().anyMatch(
+                l -> !l.getEnd().isBefore(start) && !l.getStart().isAfter(end)
+        );
+
+        return loanIntervalOverlap;
 
     }
 
@@ -55,11 +67,19 @@ public class LoanService {
        return loans;
     }
 
-    public Loan updateLoan(@NotNull Loan loan) {
+    public Loan updateLoan(Loan loan) {
         return loanRepository.save(loan);
     }
 
+
+    //TODO: add paging and sorting
     public List<Loan> getAllLoans() {
         return loanRepository.findAll();
+    }
+
+    public Collection<Item> getAllItemsForLoan(int id) {
+
+        Loan loan = loanRepository.findById(id).orElseThrow(LoanNotFoundException::new);
+        return loan.getItems();
     }
 }

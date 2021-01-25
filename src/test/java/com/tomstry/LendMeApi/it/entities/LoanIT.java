@@ -1,7 +1,6 @@
 package com.tomstry.LendMeApi.it.entities;
 
 import com.tomstry.LendMeApi.entity.Item;
-import com.tomstry.LendMeApi.entity.ItemLoan;
 import com.tomstry.LendMeApi.entity.Loan;
 import com.tomstry.LendMeApi.entity.Person;
 import com.tomstry.LendMeApi.repository.LoanRepository;
@@ -25,68 +24,8 @@ class LoanIT {
     @Test
     public void getComingEndsShouldReturnTopTenEnds() {
 
-        List<Loan> mockLoans;
-        mockLoans = generateLoanWithItem(30);
-        for (Loan loan : mockLoans) {
-            loanRepository.save(loan);
-        }
-        List<Loan> retrievedLoan = (List<Loan>) loanRepository.findTop10ByOrderByEnd().orElse(Collections.emptyList());
-        Assertions.assertEquals(retrievedLoan.size(), 10);
-        Assert.assertTrue(retrievedLoan.get(0).getEnd().isBefore(retrievedLoan.get(7).getEnd()));
-        loanRepository.flush();
     }
 
-    @Test
-    public void RetrievingItemsShouldReturnEmptyList() {
-
-        List<Loan> mockLoans;
-        mockLoans = generateLoans(5);
-        for (Loan loan : mockLoans) {
-            loanRepository.save(loan);
-        }
-        loanRepository.flush();
-
-        Assertions.assertNotNull(loanRepository.findAll().get(2).getItemLoans());
-     //   Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {loanRepository.findAll().get(2).getItems().get(5);});
-    }
-
-    @Test
-    public void SavingAndRetrievingNestedItemShouldWork() {
-        Random rd = new Random();
-        Loan newLoan = new Loan();
-
-        newLoan.setLender(generatePeople(1).get(0));
-        newLoan.setLender(newLoan.getLender());
-        newLoan.setTerms("Dumbo jumbo");
-        newLoan.setStart(ZonedDateTime.now());
-        newLoan.setEnd(newLoan.getStart().plusDays(20));
-        Item newItem = generateItems(1).get(0);
-        ItemLoan newItemLoan = new ItemLoan();
-        newItemLoan.setLoan(newLoan);
-        newItemLoan.setItem(newItem);
-        newItemLoan.setAmount(20);
-        newLoan.getItemLoans().add(newItemLoan);
-        newLoan = loanRepository.save(newLoan);
-        loanRepository.flush();
-        Loan retrievedLoan = loanRepository.findById(newLoan.getId()).orElse(new Loan());
-        Assertions.assertTrue(retrievedLoan.getItemLoans().iterator().next().getItem().getTitle() == newItem.getTitle());
-    }
-
-
-
-    private List<Loan> generateLoanWithItem(int amount) {
-
-        List<Loan> mockLoans = generateLoans(amount);
-        List<Item> mockItemDetails = generateItems(amount);
-        for (int i=0; i < mockLoans.size();i++) {
-            ItemLoan itemloan = new ItemLoan();
-            itemloan.setItem(mockItemDetails.get(i));
-            itemloan.setLoan(mockLoans.get(i));
-            itemloan.setAmount(10-i*2);
-            mockLoans.get(i).getItemLoans().add(itemloan);
-        }
-        return mockLoans;
-    }
 
     private List<Loan> generateLoans(int amount) {
         List<Person> mockLenders = generatePeople(amount);
@@ -126,15 +65,6 @@ class LoanIT {
         return people;
     }
 
-    private Timestamp nextDate() {
-        Random rd = new Random();
-        int starDate = rd.nextInt(2050 - 1900) + 1900;
-        long offset = Timestamp.valueOf(starDate + "-01-01 00:00:00").getTime();
-        long end = Timestamp.valueOf((starDate + 5) + "-01-01 00:00:00").getTime();
-        long diff = end - offset + 1;
-        Timestamp rand = new Timestamp(offset + (long) (Math.random() * diff));
-        return rand;
-    }
 
     private List<Item> generateItems(int amount) {
         List<Person> generatedPeople = generatePeople(amount);

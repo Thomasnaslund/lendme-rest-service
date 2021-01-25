@@ -1,9 +1,10 @@
 spring:
   datasource:
+    jdbc-url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
     url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
     driver-class-name: org.h2.Driver
     username: sa
-    password: sa
+    password:
   jpa:
     hibernate:
       driverClassName: org.h2.Driver
@@ -12,6 +13,8 @@ spring:
       show-sql: true
       use_sql_comments: true
       format_sql: true
+  flyway:
+      enabled: false
 logging:
   level:
     org:

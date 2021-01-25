@@ -15,7 +15,6 @@ public class ItemController {
     @Autowired
     private ItemService itemService;
 
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void addItem(@RequestBody @Valid Item item) {
