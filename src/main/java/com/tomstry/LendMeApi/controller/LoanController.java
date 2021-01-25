@@ -30,13 +30,13 @@ public class LoanController {
     }
 
     @GetMapping(path = "/{id}/items")
-    public Collection<Item> getAllItemsForLoan(@PathVariable final int id) {
+    public Collection<Item> getAllItemsForLoan(@PathVariable int id) {
         return loanService.getAllItemsForLoan(id);
     }
 
     @PostMapping(path = "/{id}/items")
     @ResponseStatus(HttpStatus.CREATED)
-    public Item addItemToLoan(@PathVariable final int id, @RequestBody @Valid Item item) {
+    public Collection<Item> addItemToLoan(@PathVariable int id, @RequestBody @Valid Item item) {
         return loanService.getItems(id);
     }
 
@@ -46,8 +46,8 @@ public class LoanController {
     }
 
     @PutMapping(path = "/{id}")
-    public Loan UpdateLoan(@RequestBody @Valid Loan loanToUpdate) {
-        return loanService.updateLoan(loanToUpdate);
+    public Loan UpdateLoan(@PathVariable int id, @RequestBody @Valid Loan loanToUpdate) {
+        return loanService.updateLoan(id, loanToUpdate);
     }
 
 }

@@ -11,8 +11,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 import static org.mockito.Mockito.times;
@@ -34,7 +32,7 @@ public class LoanServiceTest {
         loan.setId(21);
         loan.setStart(ZonedDateTime.now());
         Mockito.when(dao.save(Mockito.any(Loan.class))).thenAnswer(i -> i.getArguments()[0]);
-        Loan retrievedLoan = loanService.updateLoan(loan);
+        Loan retrievedLoan = loanService.updateLoan(id, loan);
         Mockito.verify(dao, times(1)).save(Mockito.any(Loan.class));
     }
 
@@ -42,7 +40,7 @@ public class LoanServiceTest {
     public void shouldReturnNullLoan() {
         //Create one sample userDto object with test data
         Loan loan = new Loan();
-        Loan retrievedLoan = loanService.updateLoan(loan);
+        Loan retrievedLoan = loanService.updateLoan(id, loan);
         Assertions.assertNull(retrievedLoan);
 
     }
