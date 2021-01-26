@@ -36,9 +36,11 @@ public class Loan {
     private Person lender;
 
     @Column(name="start")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private ZonedDateTime start;
 
     @Column(name="end")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private ZonedDateTime end;
 
     @Column(name="terms")

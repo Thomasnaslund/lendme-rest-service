@@ -10,9 +10,10 @@ import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Entity
-@Data
+@Setter
+@RequiredArgsConstructor
+@Getter
 @Table(name= "persons")
-@NoArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
 public class Person {

@@ -27,11 +27,6 @@ public class LoanService {
 
     public Loan addLoan(Loan loan) throws OverlappingDateException {
 
-        boolean loanIntervalOverlaps = loan.getItems().stream().anyMatch(l ->
-                intervalOverlaps(loan, l)
-        );
-
-        if (loanIntervalOverlaps) throw new OverlappingDateException();
         //TODO Log here
         return loanRepository.save(loan);
 
@@ -44,7 +39,7 @@ public class LoanService {
      * @param item to be added to loan, must at least contain id
      * @throws OverlappingDateException if loan interval overlaps other loans;
      */
-    private boolean intervalOverlaps(Loan loan, Item item) {
+    public boolean intervalOverlaps(Loan loan, Item item) {
         List<Loan> loans = (List<Loan>) loanRepository.findByItems_Id(item.getId())
                 .orElse(Collections.emptyList());
 
@@ -76,20 +71,20 @@ public class LoanService {
         }).orElseThrow(LoanNotFoundException::new);
     }
 
-    public Loan addItem(int id, Item item) {
+    public Collection<Item> addItem(int id, Item item) {
         Loan loan = loanRepository.findById(id).orElseThrow(LoanNotFoundException::new);
-        if (intervalOverlaps(loan, item)) throw new OverlappingDateException();
+        if (intervalOverlaps(loan, item)) throw new OverlappingDateException(item.getId());
         loan.getItems().add(item);
-        return loanRepository.save(loan);
+        return loanRepository.save(loan).getItems();
     }
 
-
-    public Loan addItems(int id, List<Item> items) {
+    public Collection<Item> addItems(int id, List<Item> items) {
         Loan loan = loanRepository.findById(id).orElseThrow(LoanNotFoundException::new);
         boolean overlap = items.stream().anyMatch(i -> intervalOverlaps(loan, i));
-        if (overlap) throw new OverlappingDateException();
+        //Should be changed to get the real index v
+        if (overlap) throw new OverlappingDateException(items.get(0).getId());
         items.stream().forEach(i -> loan.getItems().add(i));
-        return loanRepository.save(loan);
+        return loanRepository.save(loan).getItems();
     }
 
     //TODO: add paging and sorting
