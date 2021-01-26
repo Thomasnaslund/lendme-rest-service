@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tomstry.LendMeApi.entity.Item;
 import com.tomstry.LendMeApi.entity.Loan;
 import com.tomstry.LendMeApi.entity.Person;
+import com.tomstry.LendMeApi.repository.ItemRepository;
 import com.tomstry.LendMeApi.repository.LoanRepository;
+import com.tomstry.LendMeApi.repository.PersonRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,16 +41,53 @@ public class LoanControllerIT {
     @Autowired
     private LoanRepository loanRepository;
 
+    @Autowired
+    private ItemRepository itemRepository;
+
+    @Autowired
+    private PersonRepository personRepository;
+
     @Test
     public void addLoanWithItemsShouldItemsReturnOKAndLoan() throws Exception {
 
+        Loan loan = generateLoans(1).get(0);
+        loan.getItems().add(generateItems(1).get(0));
+        loan.getItems().add(generateItems(1).get(0));
+        String loanJson = objectMapper.writeValueAsString(loan);
 
-/*
+        System.out.println(loanJson);
         mockMvc.perform(get("/api/v1/loan/")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-*/
+
     }
+
+    @Test
+    public void testAddingLoanWithDates() throws Exception {
+        Person person = new Person("john", "travolta");
+        person = personRepository.save(person);
+        Person person1 = new Person();
+        person1.setId(person.getId());
+        Loan loan = generateLoans(1).get(0);
+        loan.setLender(person1);
+        loan = loanRepository.save(loan);
+        Item item = generateItems(1).get(0);
+        item.setOwner(person1);
+        item = itemRepository.save(item);
+
+
+
+        String loanJson = objectMapper.writeValueAsString(loan);
+        Item newItem = new Item();
+        newItem.setId(item.getId());
+
+        String va = objectMapper.writeValueAsString(newItem);
+        mockMvc.perform(post("/api/v1/loan/"+loan.getId()+"/items")
+                .contentType(MediaType.APPLICATION_JSON).content(va))
+                .andExpect(status().isCreated());
+
+    }
+
 
     private List<Person> generatePeople(int amount) {
         List<Person> people = new ArrayList();
@@ -75,14 +115,6 @@ public class LoanControllerIT {
         return loans;
     }
 
-    /*
-    private List<Loan> generateLoanWithItem(int amount) {
-
-
-    }
-
-     */
-
     private List<Item> generateItems(int amount) {
         List<Person> generatedPeople = generatePeople(amount);
         List<Item> itemDetails = new ArrayList();
@@ -98,5 +130,4 @@ public class LoanControllerIT {
         }
         return itemDetails;
     }
-
 }

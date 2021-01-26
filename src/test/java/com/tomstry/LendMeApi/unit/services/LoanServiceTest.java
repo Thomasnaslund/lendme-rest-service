@@ -24,7 +24,6 @@ import static org.mockito.Mockito.times;
 @RunWith(MockitoJUnitRunner.class)
 public class LoanServiceTest {
 
-
     @Mock
     LoanRepository dao;
 
@@ -57,12 +56,11 @@ public class LoanServiceTest {
         boolean result = loanService.intervalOverlaps(loan, newItem);
         Mockito.verify(dao).findByItems_Id(Mockito.any(Integer.class));
         Assertions.assertTrue(result);
-
     }
 
     @Test
     public void shouldReturnNullLoan() {
-        //Create one sample userDto object with test data
+
 
     }
 
