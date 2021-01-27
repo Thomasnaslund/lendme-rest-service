@@ -7,8 +7,8 @@ import com.tomstry.LendMeApi.entity.Person;
 import com.tomstry.LendMeApi.repository.ItemRepository;
 import com.tomstry.LendMeApi.repository.LoanRepository;
 import com.tomstry.LendMeApi.repository.PersonRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,12 +16,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -30,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 public class LoanControllerIT {
 
     @Autowired
@@ -53,13 +56,9 @@ public class LoanControllerIT {
         Loan loan = generateLoans(1).get(0);
         loan.getItems().add(generateItems(1).get(0));
         loan.getItems().add(generateItems(1).get(0));
-        String loanJson = objectMapper.writeValueAsString(loan);
-
-        System.out.println(loanJson);
         mockMvc.perform(get("/api/v1/loan/")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-
     }
 
     @Test
@@ -75,17 +74,15 @@ public class LoanControllerIT {
         item.setOwner(person1);
         item = itemRepository.save(item);
 
-
-
         String loanJson = objectMapper.writeValueAsString(loan);
         Item newItem = new Item();
         newItem.setId(item.getId());
 
         String va = objectMapper.writeValueAsString(newItem);
-        mockMvc.perform(post("/api/v1/loan/"+loan.getId()+"/items")
+
+         mockMvc.perform(post("/api/v1/loan/"+loan.getId()+"/items")
                 .contentType(MediaType.APPLICATION_JSON).content(va))
                 .andExpect(status().isCreated());
-
     }
 
 

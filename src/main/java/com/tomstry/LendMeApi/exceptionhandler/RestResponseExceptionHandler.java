@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 public class RestResponseExceptionHandler
         extends ResponseEntityExceptionHandler {
 
-
     @ExceptionHandler(value = OverlappingDateException.class)
     protected ResponseEntity<Object> handleOverlappingLoans(
             OverlappingDateException ex, WebRequest request) {
