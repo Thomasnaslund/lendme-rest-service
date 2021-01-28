@@ -26,13 +26,12 @@ public class Loan {
     @Column(name = "id")
     private Integer id;
 
-    @Valid
-    @ManyToMany(mappedBy = "loans", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
+
+    @ManyToMany(mappedBy = "loans", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private Set<Item> items = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "lender_id")
-    @Valid
     private Person lender;
 
     @Column(name="start")

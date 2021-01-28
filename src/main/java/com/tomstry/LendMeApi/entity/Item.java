@@ -36,6 +36,7 @@ public class Item {
     @NotBlank
     private String title;
 
+    @NotBlank
     @Column(name = "info")
     private String description;
 
