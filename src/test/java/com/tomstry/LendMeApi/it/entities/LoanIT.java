@@ -3,12 +3,15 @@ package com.tomstry.LendMeApi.it.entities;
 import com.tomstry.LendMeApi.entity.Item;
 import com.tomstry.LendMeApi.entity.Loan;
 import com.tomstry.LendMeApi.entity.Person;
+import com.tomstry.LendMeApi.repository.ItemRepository;
 import com.tomstry.LendMeApi.repository.LoanRepository;
+import com.tomstry.LendMeApi.repository.PersonRepository;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -21,9 +24,22 @@ class LoanIT {
     @Autowired
     private LoanRepository loanRepository;
 
-    @Test
-    public void getComingEndsShouldReturnTopTenEnds() {
+    @Autowired
+    private ItemRepository itemRepository;
 
+    @Autowired
+    private PersonRepository personRepository;
+
+
+    @Test
+    public void testAddingLoansWithChildContainingOnlyIDReference() {
+        Person person = new Person("john", "travolta");
+
+        Loan loan = generateLoans(1).get(0);
+        loan = loanRepository.save(loan);
+        loanRepository.flush();
+        Loan storedLoan = loanRepository.findById(loan.getId()).orElseThrow();
+        Assertions.assertTrue(storedLoan.getLender().getFullName().equals(person.getFullName()));
     }
 
 

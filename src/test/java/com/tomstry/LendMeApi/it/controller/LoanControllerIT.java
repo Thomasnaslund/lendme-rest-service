@@ -73,7 +73,6 @@ public class LoanControllerIT {
         Item item = generateItems(1).get(0);
         item.setOwner(person1);
         item = itemRepository.save(item);
-
         String loanJson = objectMapper.writeValueAsString(loan);
         Item newItem = new Item();
         newItem.setId(item.getId());
@@ -84,6 +83,36 @@ public class LoanControllerIT {
                 .contentType(MediaType.APPLICATION_JSON).content(va))
                 .andExpect(status().isCreated());
     }
+
+
+    public void testAddingLoanWithOverlappingDatesShouldReturn400() throws Exception {
+        Person person = new Person("john", "travolta");
+        person = personRepository.save(person);
+        Person person1 = new Person();
+        person1.setId(person.getId());
+        Loan loan = generateLoans(1).get(0);
+        loan.setLender(person1);
+        loan = loanRepository.save(loan);
+        Item item = generateItems(1).get(0);
+        item.setOwner(person1);
+        item = itemRepository.save(item);
+
+        String loanJson = objectMapper.writeValueAsString(loan);
+        Item newItem = new Item();
+        newItem.setId(item.getId());
+
+        String va = objectMapper.writeValueAsString(newItem);
+
+        mockMvc.perform(post("/api/v1/loan/"+loan.getId()+"/items")
+                .contentType(MediaType.APPLICATION_JSON).content(va))
+                .andExpect(status().isCreated());
+    }
+
+
+
+
+
+
 
 
     private List<Person> generatePeople(int amount) {

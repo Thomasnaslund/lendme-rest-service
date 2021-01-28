@@ -7,31 +7,37 @@ import com.tomstry.LendMeApi.exceptionhandler.LoanNotFoundException;
 import com.tomstry.LendMeApi.exceptionhandler.OverlappingDateException;
 import com.tomstry.LendMeApi.repository.ItemRepository;
 import com.tomstry.LendMeApi.repository.LoanRepository;
+import com.tomstry.LendMeApi.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
-import java.time.ZonedDateTime;
 import java.util.*;
 
 @Service
 public class LoanService {
 
     @Autowired
-    private LoanRepository loanRepository;
+    private LoanRepository loanDao;
 
     @Autowired
-    private ItemRepository itemRepository;
+    private ItemRepository itemDao;
+
+    @Autowired
+    private PersonRepository personDao;
+
+    public LoanService() {
+    }
 
     public Loan findLoan(int id) {
-        Loan loan = loanRepository.findById(id).orElseThrow(LoanNotFoundException::new);
+        Loan loan = loanDao.findById(id).orElseThrow(LoanNotFoundException::new);
         return loan;
     }
 
     public Loan addLoan(Loan loan) throws OverlappingDateException {
 
         //TODO Log here
-        return loanRepository.save(loan);
+        return loanDao.save(loan);
 
     }
 
@@ -43,7 +49,7 @@ public class LoanService {
      * @throws OverlappingDateException if loan interval overlaps other loans;
      */
     public boolean intervalOverlaps(Loan loan, Item item) {
-        List<Loan> loans = (List<Loan>) loanRepository.findByItems_Id(item.getId())
+        List<Loan> loans = (List<Loan>) loanDao.findByItems_Id(item.getId())
                 .orElse(Collections.emptyList());
 
         boolean
@@ -54,54 +60,52 @@ public class LoanService {
     }
 
     public Collection<Loan> getComingDeadlines() {
-        Collection loans = loanRepository.findTop10ByOrderByEnd().orElse(Collections.emptyList());
+        Collection loans = loanDao.findTop10ByOrderByEnd().orElse(Collections.emptyList());
         return loans;
     }
 
     public Loan updateLoan(int id, Loan loan) {
-        return loanRepository.findById(id).map(l -> {
+        return loanDao.findById(id).map(l -> {
             l.setTerms(loan.getTerms());
             l.setStart(loan.getStart());
             l.setEnd(loan.getEnd());
-            return loanRepository.save(l);
+            return loanDao.save(l);
         }).orElseThrow(LoanNotFoundException::new);
     }
 
     public Loan updateLender(int id, Person person) {
-        return loanRepository.findById(id).map(l -> {
+        return loanDao.findById(id).map(l -> {
             l.setLender(person);
-            return loanRepository.save(l);
+            return loanDao.save(l);
         }).orElseThrow(LoanNotFoundException::new);
     }
 
-    public Collection<Item> addItem(int loanId, Item item) {
-        Loan loan = loanRepository.findById(loanId).orElseThrow(LoanNotFoundException::new);
-        item = itemRepository.findById(item.getId()).orElseThrow(LoanNotFoundException::new);
+    public Item addItem(int loanId, Item item) {
+        Loan loan = loanDao.findById(loanId).orElseThrow(LoanNotFoundException::new);
+        item = itemDao.findById(item.getId()).orElseThrow(LoanNotFoundException::new);
         if (intervalOverlaps(loan, item)) throw new OverlappingDateException(item.getId());
         loan.getItems().add(item);
-        return loanRepository.save(loan).getItems();
+        loanDao.save(loan);
+        return item;
     }
 
-    public Collection<Item> addItems(int id, List<Item> items) {
-        Loan loan = loanRepository.findById(id).orElseThrow(LoanNotFoundException::new);
-        boolean overlap = items.stream().anyMatch(i -> intervalOverlaps(loan, i));
-        //Should be changed to get the real index v
-        if (overlap) throw new OverlappingDateException(items.get(0).getId());
-        items.stream().forEach(i -> loan.getItems().add(i));
-        return loanRepository.save(loan).getItems();
+    @Transactional
+    public Collection<Item> addItems(int loanId, List<Item> items) {
+       items.stream().forEach(item -> addItem(loanId,item));
+        return items;
     }
 
     //TODO: add paging and sorting
     public List<Loan> getAllLoans() {
-        return loanRepository.findAll();
+        return loanDao.findAll();
     }
 
     public Collection<Item> getAllItemsForLoan(int id) {
-        Loan loan = loanRepository.findById(id).orElseThrow(LoanNotFoundException::new);
+        Loan loan = loanDao.findById(id).orElseThrow(LoanNotFoundException::new);
         return loan.getItems();
     }
 
     public Collection<Item> getItems(int id) {
-        return loanRepository.findById(id).map(l -> l.getItems()).orElseThrow(LoanNotFoundException::new);
+        return loanDao.findById(id).map(l -> l.getItems()).orElseThrow(LoanNotFoundException::new);
     }
 }

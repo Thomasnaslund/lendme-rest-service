@@ -31,12 +31,13 @@ public class LoanController {
 
     @GetMapping(path = "/{id}/items")
     public Collection<Item> getAllItemsForLoan(@PathVariable int id) {
+
         return loanService.getAllItemsForLoan(id);
     }
 
     @PostMapping(path = "/{id}/items")
     @ResponseStatus(HttpStatus.CREATED)
-    public Collection<Item> addItemToLoan(@PathVariable int id, @RequestBody Item item) {
+    public Item addItemToLoan(@PathVariable int id, @RequestBody Item item) {
         return loanService.addItem(id, item);
     }
 

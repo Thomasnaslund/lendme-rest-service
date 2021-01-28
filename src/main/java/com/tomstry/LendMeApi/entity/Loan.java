@@ -30,7 +30,7 @@ public class Loan {
     @ManyToMany(mappedBy = "loans", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private Set<Item> items = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "lender_id")
     private Person lender;
 
