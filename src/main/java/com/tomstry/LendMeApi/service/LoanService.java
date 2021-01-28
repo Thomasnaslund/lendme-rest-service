@@ -5,6 +5,7 @@ import com.tomstry.LendMeApi.entity.Loan;
 import com.tomstry.LendMeApi.entity.Person;
 import com.tomstry.LendMeApi.exceptionhandler.LoanNotFoundException;
 import com.tomstry.LendMeApi.exceptionhandler.OverlappingDateException;
+import com.tomstry.LendMeApi.repository.ItemRepository;
 import com.tomstry.LendMeApi.repository.LoanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,8 @@ public class LoanService {
     @Autowired
     private LoanRepository loanRepository;
 
+    @Autowired
+    private ItemRepository itemRepository;
 
     public Loan findLoan(int id) {
         Loan loan = loanRepository.findById(id).orElseThrow(LoanNotFoundException::new);
@@ -43,7 +46,7 @@ public class LoanService {
         List<Loan> loans = (List<Loan>) loanRepository.findByItems_Id(item.getId())
                 .orElse(Collections.emptyList());
 
-        boolean loanIntervalOverlap;
+        boolean
         loanIntervalOverlap = loans.stream().anyMatch(
                 l -> !l.getEnd().isBefore(loan.getStart()) && !l.getStart().isAfter(loan.getEnd())
         );
@@ -71,8 +74,9 @@ public class LoanService {
         }).orElseThrow(LoanNotFoundException::new);
     }
 
-    public Collection<Item> addItem(int id, Item item) {
-        Loan loan = loanRepository.findById(id).orElseThrow(LoanNotFoundException::new);
+    public Collection<Item> addItem(int loanId, Item item) {
+        Loan loan = loanRepository.findById(loanId).orElseThrow(LoanNotFoundException::new);
+        item = itemRepository.findById(item.getId()).orElseThrow(LoanNotFoundException::new);
         if (intervalOverlaps(loan, item)) throw new OverlappingDateException(item.getId());
         loan.getItems().add(item);
         return loanRepository.save(loan).getItems();

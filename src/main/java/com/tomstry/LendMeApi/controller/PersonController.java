@@ -1,6 +1,7 @@
 package com.tomstry.LendMeApi.controller;
 
 import com.tomstry.LendMeApi.entity.Person;
+import com.tomstry.LendMeApi.exceptionhandler.LoanNotFoundException;
 import com.tomstry.LendMeApi.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class PersonController {
 
     @GetMapping(path = "/{id}")
     public Person getPersonById(@PathVariable int id) {
-        Person person = personService.getPersonByID(id).orElse(null);
+        Person person = personService.getPersonByID(id).orElseThrow(LoanNotFoundException::new);
         return person;
     }
 

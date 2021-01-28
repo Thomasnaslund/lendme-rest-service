@@ -36,8 +36,8 @@ public class LoanController {
 
     @PostMapping(path = "/{id}/items")
     @ResponseStatus(HttpStatus.CREATED)
-    public Collection<Item> addItemToLoan(@PathVariable int id, @RequestBody @Valid Item item) {
-        return loanService.getItems(id);
+    public Collection<Item> addItemToLoan(@PathVariable int id, @RequestBody Item item) {
+        return loanService.addItem(id, item);
     }
 
     @GetMapping(path = "/{id}")
