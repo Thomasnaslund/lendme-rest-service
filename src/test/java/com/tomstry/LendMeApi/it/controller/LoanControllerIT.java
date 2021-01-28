@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -23,7 +24,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -62,50 +62,71 @@ public class LoanControllerIT {
     }
 
     @Test
-    public void testAddingLoanWithDates() throws Exception {
+    public void testAddingItemToLoanShouldReturnCreated() throws Exception {
         Person person = new Person("john", "travolta");
         person = personRepository.save(person);
-        Person person1 = new Person();
-        person1.setId(person.getId());
         Loan loan = generateLoans(1).get(0);
-        loan.setLender(person1);
+        loan.setLender(person);
         loan = loanRepository.save(loan);
         Item item = generateItems(1).get(0);
-        item.setOwner(person1);
         item = itemRepository.save(item);
-        String loanJson = objectMapper.writeValueAsString(loan);
-        Item newItem = new Item();
-        newItem.setId(item.getId());
 
-        String va = objectMapper.writeValueAsString(newItem);
+        Item itemToBePosted = new Item();
+        itemToBePosted.setId(item.getId());
+
+        String ItemPost = objectMapper.writeValueAsString(itemToBePosted);
 
          mockMvc.perform(post("/api/v1/loan/"+loan.getId()+"/items")
-                .contentType(MediaType.APPLICATION_JSON).content(va))
+                .contentType(MediaType.APPLICATION_JSON).content(ItemPost))
                 .andExpect(status().isCreated());
     }
 
-
-    public void testAddingLoanWithOverlappingDatesShouldReturn400() throws Exception {
-        Person person = new Person("john", "travolta");
-        person = personRepository.save(person);
-        Person person1 = new Person();
-        person1.setId(person.getId());
-        Loan loan = generateLoans(1).get(0);
-        loan.setLender(person1);
-        loan = loanRepository.save(loan);
+    @Test
+    public void testPostLoanWithBookedItemShouldReturn400() throws Exception {
         Item item = generateItems(1).get(0);
-        item.setOwner(person1);
         item = itemRepository.save(item);
+        Loan loan = generateLoans(1).get(0);
+        loan.getItems().add(item);
+        loan = loanRepository.save(loan);
 
-        String loanJson = objectMapper.writeValueAsString(loan);
-        Item newItem = new Item();
-        newItem.setId(item.getId());
+        Item newItem = generateItems(1).get(0);
+        Loan newLoan = generateLoans(1).get(0);
+        newLoan.getItems().add(newItem);
+        newLoan.setStart(loan.getStart().minusDays(2));
+        newLoan.setEnd(loan.getStart().plusDays(1));
+
+        String va = objectMapper.writeValueAsString(newLoan);
+
+        mockMvc.perform(post("/api/v1/loan")
+                .contentType(MediaType.APPLICATION_JSON).content(va))
+                .andExpect(status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Item with Id 1 has other loans that intersects this one"));
+    }
+
+    @Test
+    public void testPostBookedItemToLoanShouldReturn400() throws Exception {
+        Item item = generateItems(1).get(0);
+        item = itemRepository.save(item);
+        Loan loan = generateLoans(1).get(0);
+        loan.getItems().add(item);
+        loan = loanRepository.save(loan);
+
+        Item newItem = generateItems(1).get(0);
+        newItem.setId(loan.getId());
+        Loan newLoan = generateLoans(1).get(0);
+
+        //This time overlap another booked time for this item
+        newLoan.setStart(loan.getStart().minusDays(2));
+        newLoan.setEnd(loan.getStart().plusDays(1));
+        loanRepository.save(newLoan);
 
         String va = objectMapper.writeValueAsString(newItem);
 
-        mockMvc.perform(post("/api/v1/loan/"+loan.getId()+"/items")
+        mockMvc.perform(post("/api/v1/loan/"+newLoan.getId()+"/items")
                 .contentType(MediaType.APPLICATION_JSON).content(va))
-                .andExpect(status().isCreated());
+                .andExpect(status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Item with Id 1 has other loans that intersects this one"));
+
     }
 
 

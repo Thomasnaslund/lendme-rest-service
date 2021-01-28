@@ -8,6 +8,8 @@ import com.tomstry.LendMeApi.exceptionhandler.OverlappingDateException;
 import com.tomstry.LendMeApi.repository.ItemRepository;
 import com.tomstry.LendMeApi.repository.LoanRepository;
 import com.tomstry.LendMeApi.repository.PersonRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,8 @@ import java.util.*;
 
 @Service
 public class LoanService {
+
+    Logger logger = LoggerFactory.getLogger(LoanService.class);
 
     @Autowired
     private LoanRepository loanDao;
@@ -82,8 +86,12 @@ public class LoanService {
 
     public Item addItem(int loanId, Item item) {
         Loan loan = loanDao.findById(loanId).orElseThrow(LoanNotFoundException::new);
-        item = itemDao.findById(item.getId()).orElseThrow(LoanNotFoundException::new);
-        if (intervalOverlaps(loan, item)) throw new OverlappingDateException(item.getId());
+        item = itemDao.findById(item.getId()).orElse(item);
+
+        if (intervalOverlaps(loan, item))
+            logger.error("Item with id "+ item.getId()+ " is already booked",
+                new OverlappingDateException(item.getId()));
+
         loan.getItems().add(item);
         loanDao.save(loan);
         return item;

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -41,7 +42,7 @@ public class Item {
     private String description;
 
     @Column(name = "cost")
-    private BigDecimal price = BigDecimal.valueOf(0);
+    private BigDecimal price;
 
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
@@ -50,7 +51,8 @@ public class Item {
             inverseJoinColumns = @JoinColumn(name = "loan_id"))
     private Set<Loan> loans = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH})
+    @Valid
     @JoinColumn(name = "owner_id")
     private Person owner;
 

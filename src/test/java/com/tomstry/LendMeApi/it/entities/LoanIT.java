@@ -30,11 +30,9 @@ class LoanIT {
     @Autowired
     private PersonRepository personRepository;
 
-
     @Test
     public void testAddingLoansWithChildContainingOnlyIDReference() {
         Person person = new Person("john", "travolta");
-
         Loan loan = generateLoans(1).get(0);
         loan = loanRepository.save(loan);
         loanRepository.flush();
