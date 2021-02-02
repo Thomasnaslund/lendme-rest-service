@@ -52,10 +52,8 @@ class ItemIT {
     public void testRetrievingLoanFromItem() {
         Loan loan = generateLoan();
         Item item = generateItem();
-        loan.getItems().add(item);
+        loan.addItem(item);
         loanRepository.save(loan);
-        loanRepository.flush();
-
 
         Item storedItem = itemRepository.findById(item.getId()).orElseThrow(LoanNotFoundException::new);
         Assertions.assertTrue(!storedItem.getLoans().isEmpty());
@@ -82,8 +80,7 @@ class ItemIT {
     }
 
 
-    //Generator;
-
+    //Generators
 
     private Loan generateLoan() {
             Random rd = new Random();

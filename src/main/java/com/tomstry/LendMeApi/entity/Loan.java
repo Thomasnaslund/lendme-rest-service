@@ -45,4 +45,9 @@ public class Loan {
     @Column(name="terms")
     private String terms;
 
+    public void addItem(Item item) {
+        this.items.add(item);
+        item.getLoans().add(this);
+    }
+
 }
