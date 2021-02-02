@@ -40,6 +40,17 @@ class LoanIT {
         Assertions.assertTrue(storedLoan.getLender().getFullName().equals(person.getFullName()));
     }
 
+    @Test
+
+    public void testRetrievingLoanFromItem() {
+        Person person = new Person("john", "travolta");
+        Loan loan = generateLoans(1).get(0);
+        loan = loanRepository.save(loan);
+        loanRepository.flush();
+        Loan storedLoan = loanRepository.findById(loan.getId()).orElseThrow();
+        Assertions.assertTrue(storedLoan.getLender().getFullName().equals(person.getFullName()));
+    }
+
 
     private List<Loan> generateLoans(int amount) {
         List<Person> mockLenders = generatePeople(amount);

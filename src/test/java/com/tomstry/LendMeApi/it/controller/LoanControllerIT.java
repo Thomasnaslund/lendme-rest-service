@@ -33,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+//TODO make all test pass
 public class LoanControllerIT {
 
     @Autowired
@@ -52,7 +53,6 @@ public class LoanControllerIT {
 
     @Test
     public void addLoanWithItemsShouldItemsReturnOKAndLoan() throws Exception {
-
         Loan loan = generateLoans(1).get(0);
         loan.getItems().add(generateItems(1).get(0));
         loan.getItems().add(generateItems(1).get(0));

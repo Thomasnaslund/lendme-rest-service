@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/loan")
+//TODO should add params to routes
 public class LoanController {
 
     @Autowired

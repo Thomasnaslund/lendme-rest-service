@@ -89,8 +89,9 @@ public class LoanService {
         item = itemDao.findById(item.getId()).orElse(item);
 
         if (intervalOverlaps(loan, item))
-            logger.error("Item with id "+ item.getId()+ " is already booked",
-                new OverlappingDateException(item.getId()));
+          /*  logger.error("Item with id "+ item.getId()+ " is already booked",
+                new OverlappingDateException(item.getId()));*/
+        throw new OverlappingDateException(item.getId());
 
         loan.getItems().add(item);
         loanDao.save(loan);
