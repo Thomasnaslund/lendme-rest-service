@@ -39,10 +39,9 @@ public class LoanService {
     }
 
     public Loan addLoan(Loan loan) throws OverlappingDateException {
-
-        //TODO Log here
+        loan.getItems().forEach(i -> addItem(loan.getId(), i));
+        loan.setLender(loan.getLender());
         return loanDao.save(loan);
-
     }
 
     /**
@@ -89,11 +88,9 @@ public class LoanService {
         item = itemDao.findById(item.getId()).orElse(item);
 
         if (intervalOverlaps(loan, item))
-          /*  logger.error("Item with id "+ item.getId()+ " is already booked",
-                new OverlappingDateException(item.getId()));*/
-        throw new OverlappingDateException(item.getId());
-
-        loan.getItems().add(item);
+           logger.error("Item with id "+ item.getId()+ " is already booked",
+                new OverlappingDateException(item.getId()));
+        loan.addItem(item);
         loanDao.save(loan);
         return item;
     }

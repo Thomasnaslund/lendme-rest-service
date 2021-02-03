@@ -69,7 +69,6 @@ class ItemIT {
         });
     }
 
-
     @Test()
     @DisplayName("Should find Item by title")
     public void findPersonByTitleShouldWork() {
@@ -79,9 +78,7 @@ class ItemIT {
         Assertions.assertEquals(savedEntity.getId(), itemRepository.findByTitle(itemTestName).orElse(null).getId());
     }
 
-
     //Generators
-
     private Loan generateLoan() {
             Random rd = new Random();
             Loan loan = new Loan();
