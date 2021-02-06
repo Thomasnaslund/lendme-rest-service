@@ -81,11 +81,13 @@ public class LoanService {
 
     public Item addItem(int loanId, Item item) {
         Loan loan = loanDao.findById(loanId).orElseThrow(LoanNotFoundException::new);
-        item = itemDao.findById(item.getId()).orElse(item);
+        item = itemDao.findById(item.getId()).orElseThrow(LoanNotFoundException::new);
 
-        if (isBooked(loan, item))
-           logger.error("Item with id "+ item.getId()+ " is already booked",
-                new OverlappingDateException(item.getId()));
+        if (isBooked(loan, item)) {
+            logger.warn("Item with id: " + item.getId() + " is already booked");
+            throw new OverlappingDateException(item.getId());
+        }
+
         loan.addItem(item);
         loanDao.save(loan);
         return item;

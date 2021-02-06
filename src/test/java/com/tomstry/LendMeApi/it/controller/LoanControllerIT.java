@@ -57,7 +57,6 @@ public class LoanControllerIT {
     }
 
     @Test
-    //Todo Should succeed
     public void testAddingItemToLoanShouldReturnCreated() throws Exception {
         Person person = new Person("john", "travolta");
         person = personRepository.save(person);
@@ -102,14 +101,13 @@ public class LoanControllerIT {
     public void testPostBookedItemToLoanShouldReturn400() throws Exception {
         Item item = itemRepository.save(Generate.newItem());
         Loan loan = loanRepository.save(Generate.newLoan());
-        loan.getItems().add(item);
+        loan.addItem(item);
         loan = loanRepository.save(loan);
 
         Item newItem = Generate.newItem();
         newItem.setId(loan.getId());
         Loan newLoan = Generate.newLoan();
 
-        //This time overlap another booked time for this item
         newLoan.setStart(loan.getStart().minusDays(2));
         newLoan.setEnd(loan.getStart().plusDays(1));
         loanRepository.saveAndFlush(newLoan);
@@ -118,8 +116,8 @@ public class LoanControllerIT {
 
         mockMvc.perform(post("/api/v1/loan/"+newLoan.getId()+"/items")
                 .contentType(MediaType.APPLICATION_JSON).content(va))
-                .andExpect(status().isBadRequest());
-              //  .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Item with Id 1 has other loans that intersects this one"));
+                .andExpect(status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Item with Id 1 has other loans that intersects this one"));
     }
 
 }
