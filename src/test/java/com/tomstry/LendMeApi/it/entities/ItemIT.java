@@ -4,6 +4,7 @@ import com.tomstry.LendMeApi.entity.Item;
 import com.tomstry.LendMeApi.entity.Loan;
 import com.tomstry.LendMeApi.entity.Person;
 import com.tomstry.LendMeApi.exceptionhandler.LoanNotFoundException;
+import com.tomstry.LendMeApi.generator.Generate;
 import com.tomstry.LendMeApi.repository.ItemRepository;
 import com.tomstry.LendMeApi.repository.LoanRepository;
 import com.tomstry.LendMeApi.repository.PersonRepository;
@@ -29,13 +30,12 @@ class ItemIT {
     @Autowired
     private LoanRepository loanRepository;
 
-
     @Test
     @DisplayName("Saving item with owner should not throw exceptions")
     public void saveItemWithOwnerShouldNotThrowException() throws Exception {
         Assertions.assertDoesNotThrow(() -> {
             Person person = personRepository.saveAndFlush(new Person("Kent", "Benni@k.se"));
-            Item item = generateItem();
+            Item item = Generate.newItem();
             item.setOwner(person);
             itemRepository.saveAndFlush(item);
         });
@@ -43,8 +43,8 @@ class ItemIT {
 
     @Test
     public void testRetrievingLoanFromItem() {
-        Loan loan = generateLoan();
-        Item item = generateItem();
+        Loan loan = loanRepository.save(Generate.newLoan());
+        Item item = itemRepository.save(Generate.newItem());
         loan.addItem(item);
         loanRepository.save(loan);
 
@@ -58,25 +58,6 @@ class ItemIT {
            Assertions.assertThrows(DataIntegrityViolationException.class, () -> itemRepository.saveAndFlush(item));
     }
 
-    //Generators
-    private Loan generateLoan() {
-            Random rd = new Random();
-            Loan loan = new Loan();
-            loan.setLender(new Person(rd.nextInt() + "",rd.nextInt() + ""));
-            loan.setTerms("mock");
-            loan.setStart(ZonedDateTime.now());
-            loan.setEnd(loan.getStart().plusDays(20));
-           return loanRepository.save(loan);
-    }
 
-    private Item generateItem() {
-            Random rd = new Random();
-            Item item = new Item(
-                    rd.nextInt() + "item"
-                    , rd.nextInt() + "desc"
-                    , BigDecimal.valueOf(rd.nextInt())
-                    , new Person("mock", "mockery"));
-        return itemRepository.save(item);
-    }
 
 }

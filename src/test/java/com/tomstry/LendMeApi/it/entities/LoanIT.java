@@ -3,6 +3,7 @@ package com.tomstry.LendMeApi.it.entities;
 import com.tomstry.LendMeApi.entity.Item;
 import com.tomstry.LendMeApi.entity.Loan;
 import com.tomstry.LendMeApi.entity.Person;
+import com.tomstry.LendMeApi.generator.Generate;
 import com.tomstry.LendMeApi.repository.ItemRepository;
 import com.tomstry.LendMeApi.repository.LoanRepository;
 import com.tomstry.LendMeApi.repository.PersonRepository;
@@ -30,7 +31,7 @@ class LoanIT {
     @Test
     public void testRetrievingLenderFromLoan() {
         Person person = new Person("john", "travolta");
-        Loan loan = generateLoan();
+        Loan loan = loanRepository.save(Generate.newLoan());
         loan.setLender(person);
         loan = loanRepository.saveAndFlush(loan);
         Loan storedLoan = loanRepository.findById(loan.getId()).orElseThrow();
@@ -39,32 +40,10 @@ class LoanIT {
 
     @Test
     public void testRetrievingItemFromLoan() {
-        Person person = new Person("john", "travolta");
-        Loan loan = generateLoan();
-        loan.addItem(generateItem());
+        Loan loan = Generate.newLoan();
+        loan.addItem(itemRepository.save(Generate.newItem()));
         loan = loanRepository.saveAndFlush(loan);
         Loan storedLoan = loanRepository.findById(loan.getId()).orElseThrow();
         Assertions.assertTrue(!storedLoan.getItems().isEmpty());
     }
-
-    private Loan generateLoan() {
-        Random rd = new Random();
-        Loan loan = new Loan();
-        loan.setLender(new Person(rd.nextInt() + "",rd.nextInt() + ""));
-        loan.setTerms("mock");
-        loan.setStart(ZonedDateTime.now());
-        loan.setEnd(loan.getStart().plusDays(20));
-        return loanRepository.save(loan);
-    }
-
-    private Item generateItem() {
-        Random rd = new Random();
-        Item item = new Item(
-                rd.nextInt() + "item"
-                , rd.nextInt() + "desc"
-                , BigDecimal.valueOf(rd.nextInt())
-                , new Person("mock", "mockery"));
-        return itemRepository.save(item);
-    }
-
 }
