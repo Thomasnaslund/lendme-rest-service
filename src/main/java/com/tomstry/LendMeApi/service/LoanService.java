@@ -47,24 +47,20 @@ public class LoanService {
     /**
      * Checks if item has any other loans during provided loan period.
      *
-     * @param loan loan which item should be added to.
+     * @param newLoan loan which item should be added to.
      * @param item to be added to loan, must at least contain id
-     * @throws OverlappingDateException if loan interval overlaps other loans;
+     * @throws OverlappingDateException if item is already booked during loean period;
      */
-    public boolean intervalOverlaps(Loan loan, Item item) {
+    public boolean isBooked(Loan newLoan, Item item) {
         List<Loan> loans = (List<Loan>) loanDao.findByItems_Id(item.getId())
                 .orElse(Collections.emptyList());
 
-        boolean
-        loanIntervalOverlap = loans.stream().anyMatch(
-                l -> !l.getEnd().isBefore(loan.getStart()) && !l.getStart().isAfter(loan.getEnd())
-        );
-        return loanIntervalOverlap;
+        return loans.stream().anyMatch(l -> hasOverlappingDates(l, newLoan));
+
     }
 
-    public Collection<Loan> getComingDeadlines() {
-        Collection loans = loanDao.findTop10ByOrderByEnd().orElse(Collections.emptyList());
-        return loans;
+    public static boolean hasOverlappingDates(Loan l1, Loan l2) {
+        return !l2.getEnd().isBefore(l1.getStart()) && !l2.getStart().isAfter(l1.getEnd());
     }
 
     public Loan updateLoan(int id, Loan loan) {
@@ -87,7 +83,7 @@ public class LoanService {
         Loan loan = loanDao.findById(loanId).orElseThrow(LoanNotFoundException::new);
         item = itemDao.findById(item.getId()).orElse(item);
 
-        if (intervalOverlaps(loan, item))
+        if (isBooked(loan, item))
            logger.error("Item with id "+ item.getId()+ " is already booked",
                 new OverlappingDateException(item.getId()));
         loan.addItem(item);
