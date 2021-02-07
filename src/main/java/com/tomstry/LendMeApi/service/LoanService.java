@@ -3,7 +3,7 @@ package com.tomstry.LendMeApi.service;
 import com.tomstry.LendMeApi.entity.Item;
 import com.tomstry.LendMeApi.entity.Loan;
 import com.tomstry.LendMeApi.entity.Person;
-import com.tomstry.LendMeApi.exceptionhandler.LoanNotFoundException;
+import com.tomstry.LendMeApi.exceptionhandler.EntityNotFoundException;
 import com.tomstry.LendMeApi.exceptionhandler.OverlappingDateException;
 import com.tomstry.LendMeApi.repository.ItemRepository;
 import com.tomstry.LendMeApi.repository.LoanRepository;
@@ -34,12 +34,12 @@ public class LoanService {
     }
 
     public Loan findLoan(int id) {
-        Loan loan = loanDao.findById(id).orElseThrow(LoanNotFoundException::new);
+        Loan loan = loanDao.findById(id).orElseThrow(() -> new EntityNotFoundException(Loan.class));
         return loan;
     }
 
-    public Loan addLoan(Loan loan) throws OverlappingDateException {
-        loan.getItems().forEach(i -> addItem(loan.getId(), i));
+    public Loan addLoan(Loan loan) {
+        addItems(loan, loan.getItems());
         loan.setLender(loan.getLender());
         return loanDao.save(loan);
     }
@@ -69,33 +69,36 @@ public class LoanService {
             l.setStart(loan.getStart());
             l.setEnd(loan.getEnd());
             return loanDao.save(l);
-        }).orElseThrow(LoanNotFoundException::new);
+        }).orElseThrow(() -> new EntityNotFoundException(Loan.class));
     }
 
     public Loan updateLender(int id, Person person) {
         return loanDao.findById(id).map(l -> {
             l.setLender(person);
             return loanDao.save(l);
-        }).orElseThrow(LoanNotFoundException::new);
+        }).orElseThrow(() -> new EntityNotFoundException(Loan.class));
     }
 
-    public Item addItem(int loanId, Item item) {
-        Loan loan = loanDao.findById(loanId).orElseThrow(LoanNotFoundException::new);
-        item = itemDao.findById(item.getId()).orElseThrow(LoanNotFoundException::new);
+    public Item addItemToExistingLoan(int loanId, Item item) {
+        Loan loan = loanDao.findById(loanId).orElseThrow(() -> new EntityNotFoundException(Loan.class));
+        return addItem(loan, item);
+    }
 
+    public Item addItem(Loan loan, Item item) {
+        //TODO should be changed if allowed to add non Existing Items
+        item = itemDao.findById(item.getId()).orElseThrow(() -> new EntityNotFoundException(Item.class));
         if (isBooked(loan, item)) {
             logger.warn("Item with id: " + item.getId() + " is already booked");
             throw new OverlappingDateException(item.getId());
         }
-
         loan.addItem(item);
         loanDao.save(loan);
         return item;
     }
 
     @Transactional
-    public Collection<Item> addItems(int loanId, List<Item> items) {
-       items.stream().forEach(item -> addItem(loanId,item));
+    public Collection<Item> addItems(Loan loan, Collection<Item> items) {
+       items.stream().forEach(item -> addItem(loan,item));
         return items;
     }
 
@@ -105,11 +108,11 @@ public class LoanService {
     }
 
     public Collection<Item> getAllItemsForLoan(int id) {
-        Loan loan = loanDao.findById(id).orElseThrow(LoanNotFoundException::new);
+        Loan loan = loanDao.findById(id).orElseThrow(() -> new EntityNotFoundException(Loan.class));
         return loan.getItems();
     }
 
     public Collection<Item> getItems(int id) {
-        return loanDao.findById(id).map(l -> l.getItems()).orElseThrow(LoanNotFoundException::new);
+        return loanDao.findById(id).map(l -> l.getItems()).orElseThrow(() -> new EntityNotFoundException(Loan.class));
     }
 }

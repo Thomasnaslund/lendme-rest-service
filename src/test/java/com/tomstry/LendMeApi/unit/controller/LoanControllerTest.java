@@ -42,32 +42,6 @@ public class LoanControllerTest {
 
     @MockBean
     private LoanService loanService;
-
-    private List<Person> generatePeople(int amount) {
-        List<Person> people = new ArrayList();
-
-        for (int i = 0; i < amount; i++) {
-            Random rd = new Random();
-            Person person = new Person((i + " " + rd.nextInt()) + "st person", rd.nextInt() + " email");
-            people.add(person);
-        }
-        return people;
-    }
-
-    private List<Item> generateItems(int amount) {
-        List<Person> generatedPeople = generatePeople(amount);
-        List<Item> itemDetails = new ArrayList();
-        for (int i = 0; i < generatedPeople.size(); i++) {
-            Random rd = new Random();
-            Item item2 = new Item(
-                    i + " " + rd.nextInt() + "st item"
-                    , rd.nextInt() + " desc"
-                    , BigDecimal.valueOf(rd.nextInt())
-                    , generatedPeople.get(i)
-            );
-            itemDetails.add(item2);
-        }
-        return itemDetails;
-    }
+    
 
 }

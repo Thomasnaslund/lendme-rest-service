@@ -8,6 +8,7 @@ import com.tomstry.LendMeApi.generator.Generate;
 import com.tomstry.LendMeApi.repository.ItemRepository;
 import com.tomstry.LendMeApi.repository.LoanRepository;
 import com.tomstry.LendMeApi.repository.PersonRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-//TODO make all test pass
+//TODO Add mock entities in before annotation init method
 public class LoanControllerIT {
 
     @Autowired private MockMvc mockMvc;
@@ -45,6 +40,21 @@ public class LoanControllerIT {
     @Autowired private ItemRepository itemRepository;
 
     @Autowired private PersonRepository personRepository;
+
+    private Item seededLoanItem;
+    private Loan seededLoan;
+    private Person seededLender;
+
+    @Before
+    public void init () {
+        seededLoanItem = itemRepository.save(Generate.newItem());
+        seededLoan = loanRepository.save(Generate.newLoan());
+        seededLender = personRepository.save(new Person("a", "a"));
+
+        seededLoan.addItem(seededLoanItem);
+        seededLoan.setLender(seededLender);
+        seededLoan = loanRepository.save(seededLoan);
+    }
 
     @Test
     public void addLoanWithItemsShouldItemsReturnOKAndLoan() throws Exception {
@@ -58,36 +68,24 @@ public class LoanControllerIT {
 
     @Test
     public void testAddingItemToLoanShouldReturnCreated() throws Exception {
-        Person person = new Person("john", "travolta");
-        person = personRepository.save(person);
-        Loan loan = Generate.newLoan();
-        loan.setLender(person);
-        loan = loanRepository.save(loan);
-        Item item = Generate.newItem();
-        item = itemRepository.save(item);
-
-        Item itemToBePosted = new Item();
-        itemToBePosted.setId(item.getId());
-
+        Item itemToBePosted = Generate.newItem();
+        itemToBePosted = itemRepository.save(itemToBePosted);
         String ItemPost = objectMapper.writeValueAsString(itemToBePosted);
 
-         mockMvc.perform(post("/api/v1/loan/"+loan.getId()+"/items")
+         mockMvc.perform(post("/api/v1/loan/"+ seededLoan.getId()+"/items")
                 .contentType(MediaType.APPLICATION_JSON).content(ItemPost))
                 .andExpect(status().isCreated());
     }
 
     @Test
-    public void testPostLoanWithBookedItemShouldReturn400() throws Exception {
-        Item item = itemRepository.save(Generate.newItem());
-        Loan loan = loanRepository.save(Generate.newLoan());
-        loan.addItem(item);
-        loan = loanRepository.saveAndFlush(loan);
-
-        Item newItem = Generate.newItem();
+    public void testPostNewLoanWithAlreadyBookedItemShouldReturn400() throws Exception {
+        Item newItem = new Item();
+        newItem.setId(seededLoanItem.getId());
         Loan newLoan = Generate.newLoan();
         newLoan.getItems().add(newItem);
-        newLoan.setStart(loan.getStart().minusDays(2));
-        newLoan.setEnd(loan.getStart().plusDays(1));
+        newLoan.setLender(new Person("a", "a"));
+        newLoan.setStart(seededLoan.getStart().minusDays(2));
+        newLoan.setEnd(seededLoan.getStart().plusDays(1));
 
         String va = objectMapper.writeValueAsString(newLoan);
 
@@ -99,17 +97,11 @@ public class LoanControllerIT {
 
     @Test
     public void testPostBookedItemToLoanShouldReturn400() throws Exception {
-        Item item = itemRepository.save(Generate.newItem());
-        Loan loan = loanRepository.save(Generate.newLoan());
-        loan.addItem(item);
-        loan = loanRepository.save(loan);
-
         Item newItem = Generate.newItem();
-        newItem.setId(loan.getId());
         Loan newLoan = Generate.newLoan();
-
-        newLoan.setStart(loan.getStart().minusDays(2));
-        newLoan.setEnd(loan.getStart().plusDays(1));
+        newItem.setId(seededLoanItem.getId());
+        newLoan.setStart(seededLoan.getStart().minusDays(2));
+        newLoan.setEnd(seededLoan.getStart().plusDays(1));
         loanRepository.saveAndFlush(newLoan);
 
         String va = objectMapper.writeValueAsString(newItem);

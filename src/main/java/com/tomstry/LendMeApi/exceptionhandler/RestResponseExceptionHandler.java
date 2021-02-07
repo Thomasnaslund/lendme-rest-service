@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.swing.text.html.parser.Entity;
 import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,7 +30,7 @@ public class RestResponseExceptionHandler
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = LoanNotFoundException.class)
+    @ExceptionHandler(value = EntityNotFoundException.class)
     protected ResponseEntity<Object> handleNotFound(
             OverlappingDateException ex, WebRequest request) {
         Map<String, Object> body = new LinkedHashMap<>();

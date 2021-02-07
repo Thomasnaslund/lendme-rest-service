@@ -3,7 +3,7 @@ package com.tomstry.LendMeApi.it.entities;
 import com.tomstry.LendMeApi.entity.Item;
 import com.tomstry.LendMeApi.entity.Loan;
 import com.tomstry.LendMeApi.entity.Person;
-import com.tomstry.LendMeApi.exceptionhandler.LoanNotFoundException;
+import com.tomstry.LendMeApi.exceptionhandler.EntityNotFoundException;
 import com.tomstry.LendMeApi.generator.Generate;
 import com.tomstry.LendMeApi.repository.ItemRepository;
 import com.tomstry.LendMeApi.repository.LoanRepository;
@@ -48,7 +48,7 @@ class ItemIT {
         loan.addItem(item);
         loanRepository.save(loan);
 
-        Item storedItem = itemRepository.findById(item.getId()).orElseThrow(LoanNotFoundException::new);
+        Item storedItem = itemRepository.findById(item.getId()).orElseThrow(() -> new EntityNotFoundException(Loan.class));
         Assertions.assertTrue(!storedItem.getLoans().isEmpty());
     }
 
