@@ -2,8 +2,10 @@ package com.tomstry.LendMeApi.service;
 
 import com.tomstry.LendMeApi.entity.Item;
 import com.tomstry.LendMeApi.entity.Loan;
+import com.tomstry.LendMeApi.entity.Person;
 import com.tomstry.LendMeApi.exceptionhandler.EntityNotFoundException;
 import com.tomstry.LendMeApi.repository.ItemRepository;
+import com.tomstry.LendMeApi.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +17,14 @@ public class ItemService {
     @Autowired
     private ItemRepository itemRepository;
 
+    @Autowired
+    private PersonRepository personRepository;
+
     public Item addItem(Item item) {
-           item.setOwner(item.getOwner());
-            return itemRepository.save(item);
+        Person owner = personRepository.findById(item.getOwner().getId()).orElseThrow(
+                () -> new EntityNotFoundException(Item.class));
+           item.setOwner(owner);
+           return itemRepository.save(item);
     }
 
     public List<Item> getAllItems() {
@@ -26,7 +33,8 @@ public class ItemService {
     }
 
     public Item getItemByID(int id) {
-     Item retrievedItem = itemRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(Item.class));
+     Item retrievedItem = itemRepository.findById(id).orElseThrow(
+             () -> new EntityNotFoundException(Item.class));
      return retrievedItem;
     }
 

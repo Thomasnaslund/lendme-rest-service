@@ -2,6 +2,7 @@ package com.tomstry.LendMeApi.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
@@ -18,7 +19,7 @@ import java.util.Set;
 @Getter
 @Table(name= "items")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
+        property = "id", scope = Item.class)
 public class Item {
 
     public Item(String title, String description, BigDecimal price, Person owner) {
@@ -52,8 +53,8 @@ public class Item {
     private Set<Loan> loans = new HashSet<>();
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH}, fetch = FetchType.LAZY)
-    @Valid
     @JoinColumn(name = "owner_id")
+    @JsonIdentityReference(alwaysAsId=true)
     private Person owner;
 
 }

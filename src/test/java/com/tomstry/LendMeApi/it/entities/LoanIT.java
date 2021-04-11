@@ -32,10 +32,10 @@ class LoanIT {
     public void testRetrievingLenderFromLoan() {
         Person person = new Person("john", "travolta");
         Loan loan = loanRepository.save(Generate.newLoan());
-        loan.setLender(person);
+        loan.setBorrower(person);
         loan = loanRepository.saveAndFlush(loan);
         Loan storedLoan = loanRepository.findById(loan.getId()).orElseThrow();
-        Assertions.assertTrue(storedLoan.getLender().getFullName().equals(person.getFullName()));
+        Assertions.assertTrue(storedLoan.getBorrower().getFullName().equals(person.getFullName()));
     }
 
     @Test

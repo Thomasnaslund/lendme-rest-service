@@ -14,7 +14,7 @@ public class Generate {
     public static Loan newLoan() {
         Random rd = new Random();
         Loan loan = new Loan();
-        loan.setLender(new Person(rd.nextInt() + "",rd.nextInt() + ""));
+        loan.setBorrower(new Person(rd.nextInt() + "",rd.nextInt() + ""));
         loan.setTerms("mock");
         loan.setStart(ZonedDateTime.now());
         loan.setEnd(loan.getStart().plusDays(20));

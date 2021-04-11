@@ -17,7 +17,7 @@ public class PersonController {
     @Autowired
     private PersonService personService;
 
-    @PostMapping
+    @PostMapping(path = "/")
     @ResponseStatus(HttpStatus.CREATED)
     public void addPerson(@RequestBody @Valid Person person) {
         personService.addPerson(person);

@@ -8,6 +8,7 @@ import com.tomstry.LendMeApi.generator.Generate;
 import com.tomstry.LendMeApi.repository.ItemRepository;
 import com.tomstry.LendMeApi.repository.LoanRepository;
 import com.tomstry.LendMeApi.repository.PersonRepository;
+import com.tomstry.LendMeApi.service.LoanService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,6 +40,8 @@ public class LoanControllerIT {
 
     @Autowired private ItemRepository itemRepository;
 
+    @Autowired private LoanService loanService;
+
     @Autowired private PersonRepository personRepository;
 
     private Item seededLoanItem;
@@ -52,15 +55,12 @@ public class LoanControllerIT {
         seededLender = personRepository.save(new Person("a", "a"));
 
         seededLoan.addItem(seededLoanItem);
-        seededLoan.setLender(seededLender);
+        seededLoan.setBorrower(seededLender);
         seededLoan = loanRepository.save(seededLoan);
     }
 
     @Test
     public void addLoanWithItemsShouldItemsReturnOKAndLoan() throws Exception {
-        Loan loan = Generate.newLoan();
-        loan.getItems().add(Generate.newItem());
-        loan.getItems().add(Generate.newItem());
         mockMvc.perform(get("/api/v1/loan/")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -78,21 +78,10 @@ public class LoanControllerIT {
     }
 
     @Test
-    public void testPostNewLoanWithAlreadyBookedItemShouldReturn400() throws Exception {
-        Item newItem = new Item();
-        newItem.setId(seededLoanItem.getId());
-        Loan newLoan = Generate.newLoan();
-        newLoan.getItems().add(newItem);
-        newLoan.setLender(new Person("a", "a"));
-        newLoan.setStart(seededLoan.getStart().minusDays(2));
-        newLoan.setEnd(seededLoan.getStart().plusDays(1));
-
-        String va = objectMapper.writeValueAsString(newLoan);
-
-        mockMvc.perform(post("/api/v1/loan")
-                .contentType(MediaType.APPLICATION_JSON).content(va))
-                .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Item with Id 1 has other loans that intersects this one"));
+    public void testGetAllItems() throws Exception {
+        mockMvc.perform(get("/api/v1/loan")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test

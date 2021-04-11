@@ -1,7 +1,9 @@
 package com.tomstry.LendMeApi.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
@@ -15,7 +17,7 @@ import java.util.List;
 @Getter
 @Table(name= "persons")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
+        property = "id", scope = Person.class)
 public class Person {
 
     public Person (String name, String email) {
@@ -36,10 +38,10 @@ public class Person {
     @NotEmpty
     private String email;
 
-    @OneToMany(mappedBy = "lender", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "borrower", cascade = CascadeType.ALL)
     private List<Loan> loans;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties({"owner", "loans"})
     private List<Item> items;
-
 }
