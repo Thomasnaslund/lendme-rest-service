@@ -45,7 +45,7 @@ class ItemIT {
     public void testRetrievingLoanFromItem() {
         Loan loan = loanRepository.save(Generate.newLoan());
         Item item = itemRepository.save(Generate.newItem());
-        loan.addItem(item);
+        loan.setItem(item);
         loanRepository.save(loan);
 
         Item storedItem = itemRepository.findById(item.getId()).orElseThrow(() -> new EntityNotFoundException(Loan.class));

@@ -38,7 +38,7 @@ public class LoanServiceTest {
         mockLoans.add(mockLoan);
 
         //Mocking spring data functions
-        Mockito.when(dao.findByItems_Id(null)).thenReturn(Optional.of(mockLoans));
+        Mockito.when(dao.findByItem_Id(null)).thenReturn(Optional.of(mockLoans));
     }
 
     @Test
@@ -48,7 +48,7 @@ public class LoanServiceTest {
         //New loan overlaps
         newMockLoan.setStart(mockLoan.getStart().minusDays(2));
         newMockLoan.setEnd(mockLoan.getStart().plusDays(1));
-        boolean booked = loanService.isBooked(newMockLoan, Generate.newItem());
+        boolean booked = loanService.isItemBooked(newMockLoan);
         Assertions.assertTrue(booked);
     }
 

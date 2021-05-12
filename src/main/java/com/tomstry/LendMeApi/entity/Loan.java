@@ -2,15 +2,10 @@ package com.tomstry.LendMeApi.entity;
 
 import com.fasterxml.jackson.annotation.*;
 import lombok.*;
-import org.apache.catalina.authenticator.Constants;
-
 import javax.persistence.*;
-import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Setter
@@ -26,13 +21,13 @@ public class Loan {
     @Column(name = "id")
     private Integer id;
 
-    @ManyToMany(mappedBy = "loans", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @NotEmpty
-    private Set<Item> items = new HashSet<>();
+    private Item item;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "borrower_id")
-    @JsonIdentityReference(alwaysAsId = true)
+    @NotEmpty
     private Person borrower;
 
     @Column(name="start")
@@ -47,10 +42,16 @@ public class Loan {
 
     @Column(name="terms")
     private String terms;
-
-    public void addItem(Item item) {
-        this.items.add(item);
+/*
+    public void setItem(Item item) {
+        this.item = item;
         item.getLoans().add(this);
     }
 
+    public void setBorrower(Person borrower) {
+        this.borrower = borrower;
+        borrower.getLoans().add(this);
+    }
+
+ */
 }

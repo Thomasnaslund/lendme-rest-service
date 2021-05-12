@@ -3,6 +3,7 @@ package com.tomstry.LendMeApi.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
@@ -45,16 +46,11 @@ public class Item {
     @Column(name = "cost")
     private BigDecimal price;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable(
-            name = "itemLoan",
-            joinColumns = @JoinColumn(name = "item_id"),
-            inverseJoinColumns = @JoinColumn(name = "loan_id"))
+    @OneToMany(mappedBy = "item", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private Set<Loan> loans = new HashSet<>();
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
-    @JsonIdentityReference(alwaysAsId=true)
     private Person owner;
 
 }

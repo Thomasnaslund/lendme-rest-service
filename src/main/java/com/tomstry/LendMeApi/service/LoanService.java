@@ -12,10 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class LoanService {
@@ -40,27 +38,25 @@ public class LoanService {
     }
 
     public Loan addLoan(Loan loan) {
-        Person borrower = personDao.findById(loan.getBorrower().getId()).orElseThrow(
-                () -> new EntityNotFoundException(Person.class)
-        );
-        loan.setBorrower(borrower);
-        loan.getItems().addAll(addItems(loan, loan.getItems()));
+        loan.setBorrower(fetchBorrower(loan.getBorrower().getId()));
+        loan.setItem(fetchItem(loan.getItem().getId()));
+        if (isItemBooked(loan)) {
+            logger.warn("Item with id: " + loan.getItem().getId() + " is already booked");
+            throw new OverlappingDateException(loan.getItem().getId());
+        }
         return loanDao.save(loan);
     }
 
-    /**
-     * Checks if item has any other loans during provided loan period.
-     *
-     * @param newLoan loan which item should be added to.
-     * @param item to be added to loan, must at least contain id
-     * @throws OverlappingDateException if item is already booked during loan period;
-     */
-    //TODO: Check should be moved to isolated service in the future
-    public boolean isBooked(Loan newLoan, Item item) {
-        List<Loan> loans = (List<Loan>) loanDao.findByItems_Id(item.getId())
-                .orElse(Collections.emptyList());
+    private Person fetchBorrower (int id) {
+        return personDao.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(Person.class)
+        );
+    }
 
-        return loans.stream().anyMatch(l -> hasOverlappingDates(l, newLoan));
+    public boolean isItemBooked(Loan loan) {
+        List<Loan> loans = (List<Loan>) loanDao.findByItem_Id(loan.getItem().getId())
+                .orElse(Collections.emptyList());
+        return loans.stream().anyMatch(l -> hasOverlappingDates(l, loan));
 
     }
     public static boolean hasOverlappingDates(Loan l1, Loan l2) {
@@ -83,38 +79,13 @@ public class LoanService {
         }).orElseThrow(() -> new EntityNotFoundException(Loan.class));
     }
 
-    public Item addItemToExistingLoan(int loanId, Item item) {
-        Loan loan = loanDao.findById(loanId).orElseThrow(() -> new EntityNotFoundException(Loan.class));
-        return addItem(loan, item);
-    }
-
-    public Item addItem(Loan loan, Item item) {
-        //TODO should be changed if allowed to add non Existing Items
-        item = itemDao.findById(item.getId()).orElseThrow(() -> new EntityNotFoundException(Item.class));
-        if (isBooked(loan, item)) {
-            logger.warn("Item with id: " + item.getId() + " is already booked");
-            throw new OverlappingDateException(item.getId());
-        }
+    public Item fetchItem(int id) throws OverlappingDateException{
+        Item item = itemDao.findById(id).orElseThrow(() -> new EntityNotFoundException(Item.class));
         return item;
-    }
-
-    @Transactional
-    public Collection<Item> addItems(Loan loan, Collection<Item> items) {
-        items = items.stream().map(item -> addItem(loan,item)).collect(Collectors.toList());
-        return items;
     }
 
     //TODO: add paging and sorting
     public List<Loan> getAllLoans() {
         return loanDao.findAll();
-    }
-
-    public Collection<Item> getAllItemsForLoan(int id) {
-        Loan loan = loanDao.findById(id).orElseThrow(() -> new EntityNotFoundException(Loan.class));
-        return loan.getItems();
-    }
-
-    public Collection<Item> getItems(int id) {
-        return loanDao.findById(id).map(l -> l.getItems()).orElseThrow(() -> new EntityNotFoundException(Loan.class));
     }
 }

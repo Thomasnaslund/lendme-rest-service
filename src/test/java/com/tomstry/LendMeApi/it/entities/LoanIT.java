@@ -12,9 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.math.BigDecimal;
-import java.time.ZonedDateTime;
-import java.util.*;
 
 @DataJpaTest
 class LoanIT {
@@ -41,9 +38,9 @@ class LoanIT {
     @Test
     public void testRetrievingItemFromLoan() {
         Loan loan = Generate.newLoan();
-        loan.addItem(itemRepository.save(Generate.newItem()));
+        loan.setItem(itemRepository.save(Generate.newItem()));
         loan = loanRepository.saveAndFlush(loan);
         Loan storedLoan = loanRepository.findById(loan.getId()).orElseThrow();
-        Assertions.assertTrue(!storedLoan.getItems().isEmpty());
+        Assertions.assertNotNull(storedLoan.getItem());
     }
 }

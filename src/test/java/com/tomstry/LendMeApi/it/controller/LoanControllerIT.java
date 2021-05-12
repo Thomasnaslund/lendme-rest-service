@@ -54,7 +54,7 @@ public class LoanControllerIT {
         seededLoan = loanRepository.save(Generate.newLoan());
         seededLender = personRepository.save(new Person("a", "a"));
 
-        seededLoan.addItem(seededLoanItem);
+        seededLoan.setItem(seededLoanItem);
         seededLoan.setBorrower(seededLender);
         seededLoan = loanRepository.save(seededLoan);
     }
