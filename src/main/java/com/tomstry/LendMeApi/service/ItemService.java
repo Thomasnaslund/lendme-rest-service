@@ -9,7 +9,10 @@ import com.tomstry.LendMeApi.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ItemService {
@@ -27,9 +30,19 @@ public class ItemService {
            return itemRepository.save(item);
     }
 
+    public List<Item> getAllItems(Map<String,String> qparams) {
+        List<Item> items = new ArrayList<>();
+        qparams.forEach((key, value) -> {
+            if (key == "keyword") {
+                items.addAll(itemRepository.findTop5ByTitleContaining(value).orElse(Collections.emptyList()));
+            }
+        });
+        return items;
+    }
+
     public List<Item> getAllItems() {
-         List items = itemRepository.findAll();
-         return items;
+        List<Item> items = itemRepository.findAll();
+        return items;
     }
 
     public Item getItemByID(int id) {

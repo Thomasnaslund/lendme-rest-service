@@ -6,7 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping("/api/v1/item")
 @RestController
@@ -24,8 +26,15 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<Item> getAllItems() {
-        return itemService.getAllItems();
+    public List<Item> getAllItems(@RequestParam(required=false) Map<String,String> qparams) {
+        List<Item> items = new ArrayList<>();
+        if (qparams != null && !qparams.isEmpty()) {
+            items.addAll(itemService.getAllItems(qparams));
+        } else {
+            items.addAll(itemService.getAllItems());
+        }
+
+        return items;
     }
 
     @GetMapping(path = "/{id}")
