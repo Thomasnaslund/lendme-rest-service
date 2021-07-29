@@ -49,8 +49,9 @@ public class Item {
     @OneToMany(mappedBy = "item", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private Set<Loan> loans = new HashSet<>();
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH}, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH})
     @JoinColumn(name = "owner_id")
+    @JsonIgnoreProperties({"items", "loans"})
     private Person owner;
 
 }
